@@ -6,7 +6,7 @@
 class BigInt {
 private:
     int myNumDigits;
-    std::vector<char> myDigits;
+    std::vector<int> myDigits;
     enum Sign{positive, negative, zero};
     Sign mySign; // positivo o negativo
 
