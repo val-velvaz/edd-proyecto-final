@@ -30,6 +30,14 @@ public:
     friend bool Null(const BigInt&);
     int operator [] (const int) const;
 
+    // preincremento
+    BigInt& operator ++ ();
+    BigInt& operator -- ();
+    // postincremento
+    const BigInt operator ++ (int);
+    const BigInt operator -- (int);
+
+
     BigInt& operator = (const BigInt&);
 
     BigInt& operator += (const BigInt&);
@@ -40,6 +48,9 @@ public:
     std::string toString() const;
     int ToInt() const;
     double toDouble() const;
+
+    int getNumDigits() const;
+
 
     bool equal(const BigInt& rhs) const;
     bool LessThan(const BigInt& rhs) const;

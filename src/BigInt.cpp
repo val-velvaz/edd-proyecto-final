@@ -8,6 +8,7 @@ BigInt::BigInt(long long n){
     if (n > 0) {
         this->mySign = positive;
     } else if (n < 0) {
+        // pedo
         this->mySign = negative;
         n = -n; 
     } else {
@@ -41,6 +42,32 @@ std::string BigInt::toString() const {
 
 void BigInt::Print(std::ostream& os) const {
     os << toString();
+}
+
+int BigInt::getNumDigits() const {
+    return static_cast<int>(myDigits.size());
+}
+
+BigInt& BigInt::operator ++ () {
+    *this += BigInt(1);
+    return *this;
+}
+
+BigInt& BigInt::operator -- () {
+    *this -= BigInt(1);
+    return *this;
+}
+
+const BigInt BigInt::operator ++ (int dummy) { //dummy porque no se va a utilizar
+    BigInt oldValue = *this;
+    ++*this;
+    return oldValue;
+}
+
+const BigInt BigInt::operator -- (int dummy) {
+    BigInt oldValue = *this;
+    --*this;
+    return oldValue;
 }
 
 
