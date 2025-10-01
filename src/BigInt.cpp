@@ -1,53 +1,26 @@
+#include <stdexcept>
 #include "BigInt.hpp"
 
-#include <stdexcept>
+BigInt::BigInt(unsigned long long n = 0) {}
 
-BigInt::BigInt(long long v)
-    : value(v) {}
+BigInt::BigInt(long long n){
+    if (n > 0) {
+        this->mySign = positive;
+    } else if (n < 0) {
+        this->mySign = negative;
+        n = -n;
+    } else {
+        this->mySign = zero;
+    }
 
-BigInt& BigInt::operator = (const BigInt& other) {
-    if (this != &other) {
-        this->value = other.value;
-    } return *this;
+    if (n == 0) {
+        this->myDigits.push_back(0);
+    } else {
+        while (n > 0) {
+            this->myDigits.push_back(n % 10);
+            n /= 10;
+        }
+    }
+    this->myNumDigits = this->myDigits.size();
 }
-
-
-BigInt BigInt::operator + (const BigInt& other) const {
-    return BigInt(this->value + other.value);
-}
-
-BigInt BigInt::operator - (const BigInt& other) const {
-    return BigInt(this->value - other.value);
-}
-
-BigInt BigInt::operator / (const BigInt& other) const {
-    if (other.value == 0) {
-        throw std::runtime_error("Division entre cero no permitida");
-    } return BigInt(this->value / other.value);
-}
-
-BigInt BigInt::operator * (const BigInt& other) const {
-    return BigInt(this->value * other.value);
-}
-
-BigInt& BigInt::operator += (const BigInt& other)  {
-    this->value += other.value;
-    return *this;
-}
-
-BigInt& BigInt::operator -= (const BigInt& other) {
-    this->value -= other.value;
-    return *this;
-} 
-
-BigInt& BigInt::operator *= (const BigInt& other) {
-    this->value *= other.value;
-    return *this;
-}
-
-BigInt& BigInt::operator /= (const BigInt& other) {
-    this->value /= other.value;
-    return *this;
-}
-
 
