@@ -2,14 +2,14 @@
 #include "BigInt.hpp"
 
 
-BigInt::BigInt(unsigned long long n = 0) {}
+BigInt::BigInt() {}
 
 BigInt::BigInt(long long n){
     if (n > 0) {
         this->mySign = positive;
     } else if (n < 0) {
         this->mySign = negative;
-        n = -n;
+        n = -n; 
     } else {
         this->mySign = zero;
     }

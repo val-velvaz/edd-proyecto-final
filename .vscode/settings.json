@@ -1,0 +1,13 @@
+{
+    "files.exclude": {
+        "**/*.exe": true,
+        "**/*.dll": true,
+        "**/*.obj": true,
+        "**/*.o": true,
+        "**/*.class": true,
+        "**/*.pyc": true,
+        "**/bin": true,
+        "**/build": true,
+        "**/out": true
+    }
+}

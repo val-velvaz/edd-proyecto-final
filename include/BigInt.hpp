@@ -21,8 +21,8 @@ private:
     bool isPositive() const;
     
 public:
-    explicit BigInt(unsigned long long n = 0);
-    explicit BigInt(long long n);
+    BigInt();
+    explicit BigInt(long long);
     explicit BigInt(const std::string&);
     BigInt(const BigInt&);
     //~BigInt();
@@ -36,7 +36,6 @@ public:
     BigInt& operator -= (const BigInt&);
     BigInt& operator *= (const BigInt&);
     BigInt& operator /= (const BigInt&);
-    BigInt& operator *= (const BigInt&);
 
     std::string toString() const;
     int ToInt() const;

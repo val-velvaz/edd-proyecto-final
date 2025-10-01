@@ -24,6 +24,7 @@ public:
     void sort();
     void writeToDisk(const std::string&);
     void readFromDisk(const std::string&);
+    void clear();
 
     std::string toString() const;
 
