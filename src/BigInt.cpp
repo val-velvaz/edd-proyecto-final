@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <new>
 #include "BigInt.hpp"
 
 
@@ -68,6 +69,14 @@ const BigInt BigInt::operator -- (int dummy) {
     BigInt oldValue = *this;
     --*this;
     return oldValue;
+}
+
+BigInt& BigInt::operator  = (const BigInt& other) {
+    if (this != &other) {
+        this->myNumDigits = other.myNumDigits;
+        this->myDigits = other.myDigits;
+        this->mySign = other.mySign;
+    } return *this;
 }
 
 

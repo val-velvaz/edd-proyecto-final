@@ -30,6 +30,8 @@ public:
     friend bool Null(const BigInt&);
     int operator [] (const int) const;
 
+    BigInt& operator = (const BigInt&);
+
     // preincremento
     BigInt& operator ++ ();
     BigInt& operator -- ();
@@ -38,12 +40,29 @@ public:
     const BigInt operator -- (int);
 
 
-    BigInt& operator = (const BigInt&);
 
-    BigInt& operator += (const BigInt&);
-    BigInt& operator -= (const BigInt&);
-    BigInt& operator *= (const BigInt&);
-    BigInt& operator /= (const BigInt&);
+    friend BigInt& operator += (BigInt&, const BigInt&);
+    friend BigInt& operator -= (BigInt&, const BigInt&);
+    friend BigInt& operator *= (BigInt&, const BigInt&);
+    friend BigInt& operator /= (BigInt&, const BigInt&);
+    friend BigInt& operator %= (BigInt&, const BigInt&);
+
+    friend BigInt operator + (const BigInt& lhs, const BigInt& rhs);
+    friend BigInt operator - (const BigInt& lhs, const BigInt& rhs);
+    friend BigInt operator * (const BigInt& lhs, const BigInt& rhs);
+    friend BigInt operator / (const BigInt& lhs, const BigInt& rhs);
+    friend BigInt operator % (const BigInt& lhs, const BigInt& rhs);
+    friend BigInt operator ^ (const BigInt& lhs, const BigInt& rhs);
+
+    friend BigInt operator * (const BigInt& lhs, int num); // pendiente
+    friend BigInt operator * (int num, const BigInt& rhs); // pendiente
+
+    friend bool operator == (const BigInt& lhs, const BigInt& rhs);
+    friend bool operator < (const BigInt& lhs, const BigInt& rhs);
+    friend bool operator != (const BigInt& lhs, const BigInt& rhs);
+    friend bool operator > (const BigInt& lhs, const BigInt& rhs);
+    friend bool operator >= (const BigInt& lhs, const BigInt& rhs);
+    friend bool operator <= (const BigInt& lhs, const BigInt& rhs);
 
     std::string toString() const;
     int ToInt() const;
@@ -51,25 +70,18 @@ public:
 
     int getNumDigits() const;
 
-
     bool equal(const BigInt& rhs) const;
     bool LessThan(const BigInt& rhs) const;
     void Print(std::ostream& os) const;
+
+    friend std::ostream& operator << (std::ostream&, const BigInt&);
+    friend std::istream& operator >> (std::istream&, BigInt&);
+
+    friend BigInt sqrt(BigInt& a);
+    friend BigInt Factorial(int n);
 };
 
-std::ostream& operator << (std::ostream&, const BigInt&);
-std::istream& operator >> (std::istream&, BigInt&);
 
-BigInt operator + (const BigInt& lhs, const BigInt& rhs);
-BigInt operator - (const BigInt& lhs, const BigInt& rhs);
-BigInt operator * (const BigInt& lhs, const BigInt& rhs);
-BigInt operator % (const BigInt& lhs, const BigInt& rhs);
-BigInt operator * (const BigInt& lhs, int num);
-BigInt operator * (int num, const BigInt& rhs);
 
-bool operator == (const BigInt& lhs, const BigInt& rhs);
-bool operator < (const BigInt& lhs, const BigInt& rhs);
-bool operator != (const BigInt& lhs, const BigInt& rhs);
-bool operator > (const BigInt& lhs, const BigInt& rhs);
-bool operator >= (const BigInt& lhs, const BigInt& rhs);
-bool operator <= (const BigInt& lhs, const BigInt& rhs);
+
+

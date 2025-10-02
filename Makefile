@@ -2,7 +2,7 @@
 CXX = g++.exe
 
 # --- CONFIGURACIÓN DEL PROYECTO ---
-TARGET = output/Canciones.exe
+TARGET = output/proyecto_final.exe
 DEBUG_TARGET = output/Canciones_debug.exe
 
 # --- BANDERAS (FLAGS) DE COMPILACIÓN Y ENLACE ---
