@@ -29,6 +29,9 @@ BigInt::BigInt(long long n){
     this->myNumDigits = this->myDigits.size();
 }
 
+BigInt::BigInt(const BigInt& other)
+    : myNumDigits(other.myNumDigits), myDigits(other.myDigits), mySign(other.mySign) {}
+
 std::string BigInt::toString() const {
     std::string result = "";
     if (mySign == negative) {
