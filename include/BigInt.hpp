@@ -24,13 +24,15 @@ public:
     BigInt();
     explicit BigInt(long long);
     explicit BigInt(const std::string&);
-    BigInt(const BigInt&);
+    BigInt(const BigInt&); // copiar los datos que no son dinamicos
+    BigInt(BigInt&&) noexcept; // copiar los recursos dinamicos
     //~BigInt();
 
     friend bool Null(const BigInt&);
     int operator [] (const int) const;
 
     BigInt& operator = (const BigInt&);
+    BigInt& operator = (BigInt&&) noexcept;
 
     // preincremento
     BigInt& operator ++ ();

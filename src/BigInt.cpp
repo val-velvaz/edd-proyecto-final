@@ -44,6 +44,8 @@ std::string BigInt::toString() const {
     return result;
 }
 
+
+
 void BigInt::Print(std::ostream& os) const {
     os << toString();
 }
@@ -74,6 +76,7 @@ const BigInt BigInt::operator -- (int dummy) {
     return oldValue;
 }
 
+// operador de asignacion normal
 BigInt& BigInt::operator  = (const BigInt& other) {
     if (this != &other) {
         this->myNumDigits = other.myNumDigits;
@@ -82,6 +85,25 @@ BigInt& BigInt::operator  = (const BigInt& other) {
     } return *this;
 }
 
+BigInt::BigInt(BigInt&& other) noexcept 
+    : myNumDigits(other.myNumDigits), 
+    myDigits(std::move(other.myDigits)), // porque vector es dinamico
+    mySign(other.mySign)
+    {
+        other.myNumDigits = 0;
+        other.mySign = Sign::zero;
+}
+
+BigInt& BigInt::operator = (BigInt&& other) noexcept {
+    if (this != &other) {
+        this->myDigits = std::move(other.myDigits);
+        this->myNumDigits = other.myNumDigits;
+        this->mySign = other.mySign;
+
+        other.myNumDigits = 0;
+        other.mySign = Sign::zero;
+    } return *this;
+}
 
 
 
