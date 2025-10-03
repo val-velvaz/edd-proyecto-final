@@ -44,8 +44,6 @@ std::string BigInt::toString() const {
     return result;
 }
 
-
-
 void BigInt::Print(std::ostream& os) const {
     os << toString();
 }
@@ -85,6 +83,7 @@ BigInt& BigInt::operator  = (const BigInt& other) {
     } return *this;
 }
 
+// cosas por movimiento
 BigInt::BigInt(BigInt&& other) noexcept 
     : myNumDigits(other.myNumDigits), 
     myDigits(std::move(other.myDigits)), // porque vector es dinamico
@@ -105,5 +104,15 @@ BigInt& BigInt::operator = (BigInt&& other) noexcept {
     } return *this;
 }
 
+bool BigInt::isNegative() const {
+    if (this->mySign == negative) return true;
+    return false;
+    // return mySing == negative;
+}
 
+bool BigInt::isPositive() const {
+    if (this->isNegative() != true) return true;
+    return false;
+    // return mySign == positive;
+}
 
