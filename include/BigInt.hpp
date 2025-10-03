@@ -22,8 +22,9 @@ private:
     
 public:
     BigInt();
-    explicit BigInt(long long);
+    explicit BigInt(long long&); // int64_t
     explicit BigInt(const std::string&);
+    explicit BigInt(const float&);
     BigInt(const BigInt&); // copiar los datos que no son dinamicos
     BigInt(BigInt&&) noexcept; // copiar los recursos dinamicos
     //~BigInt();
@@ -41,15 +42,13 @@ public:
     const BigInt operator ++ (int);
     const BigInt operator -- (int);
 
-
-
     friend BigInt& operator += (BigInt&, const BigInt&);
     friend BigInt& operator -= (BigInt&, const BigInt&);
     friend BigInt& operator *= (BigInt&, const BigInt&);
     friend BigInt& operator /= (BigInt&, const BigInt&);
     friend BigInt& operator %= (BigInt&, const BigInt&);
 
-    friend BigInt operator + (const BigInt& lhs, const BigInt& rhs);
+    friend BigInt operator + (const BigInt& lhs, const BigInt& rhs); // static cast a bigint
     friend BigInt operator - (const BigInt& lhs, const BigInt& rhs);
     friend BigInt operator * (const BigInt& lhs, const BigInt& rhs);
     friend BigInt operator / (const BigInt& lhs, const BigInt& rhs);
@@ -81,6 +80,9 @@ public:
 
     friend BigInt sqrt(BigInt& a);
     friend BigInt Factorial(int n);
+
+    int compare(const BigInt&) const;
+    static int compare(const BigInt&, const BigInt&);
 };
 
 

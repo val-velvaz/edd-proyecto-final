@@ -116,3 +116,7 @@ bool BigInt::isPositive() const {
     // return mySign == positive;
 }
 
+bool Null(const BigInt& other) { // para ver si es cero
+    return other.mySign == BigInt::zero;
+}
+

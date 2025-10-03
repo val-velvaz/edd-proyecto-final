@@ -1,0 +1,178 @@
+COMO PODEMOS FILTRAR POR CRITERIOS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+toString que reciba la condicion (el comparador) para que filtre
+y un método para ordenar recursivamente.
+Si quiero que filtre y salga la lista ordenada de los estudiantes puede ser más complejo
+
+std::string toString(std::string(const T&)) const;
+
+Un toString que recibe un comparador y en base a el si coincide el elemento lo imprimo y si no, pues no ajja.
+Tendríamos que comparar con un elemento determinado
+std::string toString(const T&, int(const T&, const T&)) const; 
+SI HAGO ESTO sin mandar un comparador estoy haciendo la implicita, si le pongo el primer argumento es comparación explicita
+
+Implementacion
+
+std::string toString(int cmp(const T& e, int cmp(const T&, const T&)) const  {
+    std::string result;
+    int i(0);
+
+    while (i <= this->last) {
+
+    }
+}
+
+Si quiero ver la lista de estudiantes, voy a preguntar si la vamos a filtrar.
+string myStr;       // este metodo de comparación no compara por cadena, sino por estudiante
+Student myStudent;
+if (op == 's') { // esto es porque si la queremos filtrada
+    cout << "Nombre de la carrera: ";
+    getline(cin, myStr);
+    myStudent.setCareer(myStr);
+    cout << this->myListRef->toString(myStudent)(myStudent, Student::compareByCareer); // llamado a toString pero utilizado con este estudiante
+    cout << endl << endl;
+    this->enterToContinue;
+    return;
+}
+
+Que salga solamente los que coinciden con el criterio de busqueda.
+
+Hacer ordenamiento de forma interna.
+Un método sortData que llame a QuickSort
+
+void sortData();
+void sortData(int(const T&, const T&));
+
+void QuickSort(const int&, const int&);
+void QuickSort(const int&, const int&, int(const T&, const T&));
+
+void sortData() {
+    this->QuickSort(0, this->last);
+}
+
+COMO PODEMOS FILTRAR POR CRITERIOS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+toString que reciba la condicion (el comparador) para que filtre
+y un método para ordenar recursivamente.
+Si quiero que filtre y salga la lista ordenada de los estudiantes puede ser más complejo
+
+std::string toString(std::string(const T&)) const;
+
+Un toString que recibe un comparador y en base a el si coincide el elemento lo imprimo y si no, pues no ajja.
+Tendríamos que comparar con un elemento determinado
+std::string toString(const T&, int(const T&, const T&)) const; 
+SI HAGO ESTO sin mandar un comparador estoy haciendo la implicita, si le pongo el primer argumento es comparación explicita
+
+Implementacion
+
+std::string toString(int cmp(const T& e, int cmp(const T&, const T&)) const  {
+    std::string result;
+    int i(0);
+
+    while (i <= this->last) {
+
+    }
+}
+
+Si quiero ver la lista de estudiantes, voy a preguntar si la vamos a filtrar.
+string myStr;       // este metodo de comparación no compara por cadena, sino por estudiante
+Student myStudent;
+if (op == 's') { // esto es porque si la queremos filtrada
+    cout << "Nombre de la carrera: ";
+    getline(cin, myStr);
+    myStudent.setCareer(myStr);
+    cout << this->myListRef->toString(myStudent)(myStudent, Student::compareByCareer); // llamado a toString pero utilizado con este estudiante
+    cout << endl << endl;
+    this->enterToContinue;
+    return;
+}
+
+Que salga solamente los que coinciden con el criterio de busqueda.
+
+Hacer ordenamiento de forma interna.
+Un método sortData que llame a QuickSort
+
+void sortData();
+void sortData(int(const T&, const T&));
+
+void QuickSort(const int&, const int&);
+void QuickSort(const int&, const int&, int(const T&, const T&));
+
+void sortData() {
+    this->QuickSort(0, this->last);
+}
+
+void sortData(int cmp(const T&, const T&)) {
+    //recibe sus dos comparadores
+}
+
+si son solamente dos elementos no hace mucho sentido que haga el rollo de i, j y partir en dos, etc.
+Lo que podemos hacer es
+void QuickSort(const int& leftedge, const int& rightedge) {
+// criterio de paro
+    if (leftedge >= rightedge) return; // se va
+
+    // lo que podemos hacer...
+    if (rightedge == leftedge + 1)  {
+        // el arreglo es de dos elementos solamente
+        if (this->data[leftedge] > this->data[rightedge])  swap(this->data[leftedge>], this->data[rightedge]) {
+            return;
+        }
+    int i(leftedge), j(rightedge);
+    while (i < j) {
+        while (i < j && this->data[i] <= this->[leftedge]) i++ ;
+        while (i < j && this->data[j] >= this->data[rightedge]) j--;
+        if (i != j) swap(this->data[i], this->data[j]);
+    }
+    if(i != rightedge) swap(this->data[i], this->data[j]);
+    QuickSort(leftedge, i - 1, cmp);
+    QuickSort(i + 1, rightedge, cmp);
+}
+
+FALTA IMPLEMENTAR CON SUS COMPARADORES
+void QuickSort(const int& leftedge, const int& rightedge, int cmp(const T&, const T&)) {
+// criterio de paro
+    if (leftedge >= rightedge) return; // se va
+
+    // lo que podemos hacer...
+    if (rightedge == leftedge + 1)  {
+        // el arreglo es de dos elementos solamente
+        if (this->data[leftedge] > this->data[rightedge])  swap(this->data[leftedge>], this->data[rightedge]) {
+            return;
+        }
+    int i(leftedge), j(rightedge);
+    while (i < j) {
+        while (i < j && this->data[i] <= this->[leftedge]) i++ ;
+        while (i < j && this->data[j] >= this->data[rightedge]) j--;
+        if (i != j) swap(this->data[i], this->data[j]);
+    }
+    if(i != rightedge) swap(this->data[i], this->data[j]);
+    QuickSort(leftedge, i - 1);
+    QuickSort(i + 1, rightedge)
+    }
+}
+
+INTERFAZ DE USUARIO
+void StudentInterface::sortData() {
+    char op;
+    system("clear"); // actualizar para windows
+    std::cout << "*** **** **** Ordenamiento de datos *** *** ***" << std::endl << std::endl ;
+
+    do {
+        std::cout << "Ordenar por ... " << std::endl;
+        std::cout << "Nombre" << std::endl;
+        std::cout << "carrera" << std::endl << std::endl;
+        std::cout << "Elija una opción (N,C)" << std::endl;
+
+        op = toupper(op);
+    } while (op != 'N && op != 'C');
+
+    std::cout << "Ordenando la lista..." << std::endl;
+
+    if (op == N) {
+        this->myListRef->sortData(Student::compareByName);
+    } else {
+        this->myListRef->sortData(Student::compareByCareer);
+    }
+
+    std::cout << "Lista ordenada";
+    // enter to continue, implementar
+}

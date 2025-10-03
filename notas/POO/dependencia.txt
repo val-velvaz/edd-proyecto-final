@@ -1,0 +1,126 @@
+DEPENDENCIA ------------------------------------------------------------------
+Los objetos dependen mutuamente, pero la clase no para su creación.
+Objetos que viven de forma independiente, pero que se necesitan entre sí.
+Dos objetos distintos que de alguna manera se comunican entre ellas
+
+¿Cuál verbo es el que se usa?
+- depende/conduce/gestiona/maneja/controlar
+
+El chofer no es chofer hasta que no le den un auto para conducir. Gracias a la
+llave ejerce un control sobre el automóvil
+
+INTERFACES DE USUARIO Y CONTENEDORES -----------------------------------------
+Interfaz de usuario con cosas que se pueden hacer en el contenedor (o cualquier
+otra clase que nos interese). El contenedor no tiene relación con el usuario,
+pero la interfaz sí (está entre el usuario y el programa, o algo así). 
+
+¿Una interfaz de usuario tiene un contenedor? No, no lo tiene.
+¿El contenedor tiene una interfaz de usuario? No, no lo tiene.
+
+La interfaz de usuario no sirve si no puede cuestionar el contenedor. Por lo que
+la interfaz de usuario necesita la "llave" del contenedor. Es decir, la REFERENCIA.
+
+La interfaz de usuario es una clase, tiene un estado y un comportamiento. El estado
+es mínimo, pero debe tener la referencia de los objetos de los que depende.
+
+userinterface.cpp -------------------------------------------------------------
+En el constructor no se utilizará uno base, sino parametrizado. Necesita una referencia.
+Si no le doy el Contenedor, no se va a poder inicializar, porque el compilador sabe
+que NECESITA algo dentro de él.
+
+Todas las interfaces de usuario deberían ser diseñadas (así como las clases que deberían
+tener su propio diagrama de clases) para poder contener las operaciones describiendo
+su comportamiento, y a partir de ahí generar distintas interfaces de usuario en base a 
+lo que vamos a hacer. Probablemente alguna de estas interfaces de usuario "navega" a 
+otras gracias al diseño.
+
+No cada pantalla necesariamente es un método, pero cada método se acopla a las
+necesidades de la pantalla.
+
+¿Cómo va a trabajar la interfaz de usuario?
+¿Por qué es importante incorporar el diseño de interfaz de usuario?
+
+#include "contenedor.hpp"
+
+class userinterface {
+private:
+    // Contenedor myContenedor; // erroneo, porque la userinterface no tiene un contenedor
+    Contenedor *myContenedorRef; // recibe una referencia del objeto, es "la llave"
+
+    void mainMenu();
+    void addStudent();
+    void delStudent();
+    void getStudent();
+    void sortStude();
+    void writeToDisk();
+    void readFromDisk();
+    void enterToContinue();
+public:
+    userinterface(Contenedor&); // que sea forzoso recibir el contenedor sino no trabaja
+};
+
+Implementación~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+userinterface(contenedor& contenedor) 
+    : myContenedorRef(& contenedor) {this->mainMenu} // no incluyo al objeto, solo tengo su referencia, sé dónde está
+
+mainMenu() {
+    char op;
+
+    system("clear");
+    cout << "Menu Principal" << endl << endl;
+    cout << "Altas" << endl;
+    cout << "Bajas" << endl;
+    cout << "Cambios" << endl;
+    cout << "Despliegue" << endl;
+    cout << "Escribir al disco" << endl;
+    cout << "Leer del disco << endl;
+    cout << "Ordenar " << endl;
+    cout << "Salir" << endl;
+
+    cout << "Elija una opcion (A, B, C, D, E, L O, S)";
+    cin >> op;
+    cin.igonre();
+
+    switch(toupper(op)) {
+        // PENDIENTE
+        // implementar esta cosa
+    }
+}
+
+void UserInterface::enterToContinue() {
+    // implementar
+}
+
+void addStudent() {
+    system("cls");
+
+    // pendiente
+
+    myContenedorRef->add(myContenedor);
+    cout << "Cosa esta agregada";
+}
+
+void writeToDisk() {
+    system("cls");
+
+    string myStr;
+    cout << "Escritura al disco" << endl;
+    // solicitar el nombre del archivo
+
+    cout << "dame el fakin nombre del archivo: ";
+    getline(cin, myStr);
+    this->myContenedorRef->writeToDisk(myStr);
+
+    cout << endl << endl;
+
+    cout << "operacion realizada wuju" << endl;
+    this->enterToContinue;
+}
+
+
+main.cpp ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+int main() {
+    Contenedor myContenedor;
+    UserInterface myUI(myGroup); // la interfaz de usuario necesita del grupo con el que va a trabajar, sino no trabaja "platican"
+}
