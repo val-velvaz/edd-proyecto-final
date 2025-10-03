@@ -1,11 +1,14 @@
 #include <stdexcept>
 #include <new>
+#include <iostream>
+#include <string>
+
 #include "BigInt.hpp"
 
 
 BigInt::BigInt() {}
 
-BigInt::BigInt(long long n){
+BigInt::BigInt(long long& n){
     if (n > 0) {
         this->mySign = positive;
     } else if (n < 0) {
@@ -37,11 +40,53 @@ std::string BigInt::toString() const {
     if (mySign == negative) {
         result += "-";
     }
-    // recorrer el numero en orden inverso
-    for(auto it = this->myDigits.rbegin(); it != myDigits.rend(); it++) {
-        result += (*it + '0');
+
+    for (int d : myDigits) {   // recorrido normal
+        result += '0' + d;
     }
+
     return result;
+}
+
+BigInt::BigInt(const std::string& str) {
+    // recorrer el string y meter sus caracteres como dígitos en el vector<int>
+    try {
+        myDigits.clear();
+         // detectar el signo
+        size_t start = 0;
+        if (str[0] == '-') {
+            mySign = negative;
+            start = 1;
+        } else if (str[0] == '+') {
+            mySign = positive;
+            start = 1;
+        } else {
+            mySign = positive; // por defecto
+        }
+
+        for (auto i = start; i < str.size(); i++) {
+            char c = str[i]; // obtener el caracter
+
+            if (!isdigit(c)) {
+                throw std::invalid_argument("Caracter no numerico");
+            }
+
+            int digit = c - '0';
+            myDigits.push_back(digit);
+
+            
+        }
+        while (myDigits.size() > 1 && myDigits[0] == 0) {
+                myDigits.erase(myDigits.begin());
+            }
+
+        myNumDigits = static_cast<int>(myDigits.size());
+
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Argumento invalido: " << e.what() << std::endl;
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Fuera de rango: " << e.what() << std::endl;
+    }
 }
 
 void BigInt::Print(std::ostream& os) const {
