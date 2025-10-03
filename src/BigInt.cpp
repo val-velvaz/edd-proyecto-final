@@ -32,6 +32,7 @@ BigInt::BigInt(long long& n){
     this->myNumDigits = this->myDigits.size();
 }
 
+// constructor copia
 BigInt::BigInt(const BigInt& other)
     : myNumDigits(other.myNumDigits), myDigits(other.myDigits), mySign(other.mySign) {}
 
@@ -165,3 +166,14 @@ bool Null(const BigInt& other) { // para ver si es cero
     return other.mySign == BigInt::zero;
 }
 
+int BigInt::operator [] (const int index) const {
+    if (myDigits.size() <= index || index < 0) {
+        throw std::out_of_range("Indice fuera de rango");
+    } return myDigits[index];
+}
+
+int& BigInt::operator [] (const int index) {
+    if (myDigits.size() <= index || index < 0) {
+        throw std::out_of_range("Indice fuera de rango");
+    } return myDigits[index];
+}

@@ -21,6 +21,7 @@ private:
     bool isPositive() const;
     
 public:
+    // usar explicit para constructores de conversion
     BigInt();
     explicit BigInt(long long&); // int64_t
     explicit BigInt(const std::string&);
@@ -30,7 +31,9 @@ public:
     //~BigInt();
 
     friend bool Null(const BigInt&);
+    
     int operator [] (const int) const;
+    int& operator [] (const int); // poder modificar el indice
 
     BigInt& operator = (const BigInt&);
     BigInt& operator = (BigInt&&) noexcept;
