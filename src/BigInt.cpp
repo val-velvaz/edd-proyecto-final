@@ -346,11 +346,13 @@ BigInt operator ^ (const BigInt& a, const BigInt& b) {
 }
 
 BigInt operator * (const BigInt& a, int num) {
-// pendiente
+    long long n = num;
+    BigInt b(n);
+    return a * b;
 }
 
 BigInt operator * (int num, const BigInt& a) {
-// pendiente
+    return a * num;
 }
 
 bool operator == (const BigInt& a, const BigInt& b) {
