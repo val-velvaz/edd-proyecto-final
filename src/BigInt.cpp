@@ -548,7 +548,20 @@ BigInt sqrt(BigInt& a) {
 }
 
 BigInt Factorial(int n) {
-// pendiente
+        // para n=0 y n=1
+    if (n < 0) {
+        throw std::invalid_argument("Cannot compute factorial of a negative number.");
+    }
+    if (n == 0 || n == 1) {
+        return BigInt(1LL);
+    }
+    BigInt result(1LL);
+    
+    for (int i = 2; i <= n; ++i) {
+        BigInt temp(static_cast<long long>(i));
+        result = result * temp;
+    }
+    return result;
 }
 
 int compare(const BigInt&, const BigInt&) {
