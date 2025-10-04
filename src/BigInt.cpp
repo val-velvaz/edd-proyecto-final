@@ -43,15 +43,14 @@ std::string BigInt::toString() const {
     }
     if (mySign == zero)  return "0";
 
-    for (int d : myDigits) {   // recorrido normal
-        result += '0' + d;
+    for (int i = myDigits.size() - 1; i >= 0; --i) { // OOOOK
+        result += '0' + myDigits[i];
     }
 
     return result;
 }
 
 BigInt::BigInt(const std::string& str) {
-    // recorrer el string y meter sus caracteres como dígitos en el vector<int>
     try {
         myDigits.clear();
          // detectar el signo
@@ -89,6 +88,28 @@ BigInt::BigInt(const std::string& str) {
     } catch (const std::out_of_range& e) {
         std::cerr << "Fuera de rango: " << e.what() << std::endl;
     }
+}
+
+BigInt::BigInt(const float& f) {
+    long long n = static_cast<long long>(f);
+    if (n > 0) {
+        this->mySign = positive;
+    } else if (n < 0) {
+        this->mySign = negative;
+        n = -n;
+    } else {
+        this->mySign = zero;
+    }
+    if (n == 0) {
+        this->myDigits.push_back(0);
+    } else {
+        while (n > 0) {
+            this->myDigits.push_back(n % 10);
+            n /= 10;
+        }
+    }
+    this->myNumDigits = this->myDigits.size();
+    this->normalize();
 }
 
 void BigInt::Print(std::ostream& os) const {
@@ -268,4 +289,48 @@ BigInt operator + (const BigInt& a, const BigInt& b) {
 BigInt& BigInt::operator += (const BigInt& other) {
     *this = *this + other;
     return *this;
+}
+
+int BigInt::compare(const BigInt& other) const {
+    if (mySign != other.mySign) {
+        return mySign == positive ? 1 : -1;
+    }
+    if (myNumDigits != other.myNumDigits) {
+        return (myNumDigits > other.myNumDigits) ? 1 : -1;
+    }
+    for (int i = myNumDigits - 1; i >= 0; --i) {
+        if (myDigits[i] != other.myDigits[i]) {
+            return (myDigits[i] > other.myDigits[i]) ? 1 : -1;
+        }
+    }
+    return 0;
+}
+
+bool operator<(const BigInt& a, const BigInt& b) {
+    return a.compare(b) < 0;
+}
+
+bool operator >= (const BigInt& a, const BigInt& b) {
+    return !(a < b);
+}
+
+BigInt& BigInt::operator-=(const BigInt& other) {
+    *this = *this - other;
+    return *this;
+}
+
+BigInt operator-(const BigInt& a, const BigInt& b) {
+    BigInt result;
+    if (b.mySign == BigInt::negative) {
+        result = a + b.Abs();
+    } else {
+        result = a + BigInt(-1) * b; // Placeholder 
+    }
+    return result;
+}
+
+BigInt operator*(const BigInt& a, const BigInt& b) {
+    BigInt result;
+// pendiente
+    return result;
 }
