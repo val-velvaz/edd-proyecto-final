@@ -521,7 +521,30 @@ std::istream& operator >> (std::istream& is, BigInt& obj) {
 }
 
 BigInt sqrt(BigInt& a) {
-// pendiente
+    // metodo de newton
+    // lo saque de internet
+    if (a.isNegative()) {
+        throw std::invalid_argument("No se puede calcular la raiz negativa de un numero negativo");
+    }
+    if (a.mySign == BigInt::zero) {
+        return BigInt(0LL);
+    }
+    
+    BigInt x_actual;
+    if (a.getNumDigits() % 2 == 0) {
+        x_actual = BigInt("1" + std::string(a.getNumDigits() / 2, '0'));
+    } else {
+        x_actual = BigInt("3" + std::string(a.getNumDigits() / 2, '0'));
+    }
+    
+    BigInt x_next = (x_actual + a / x_actual) / BigInt(2LL);
+
+    while (x_next < x_actual) {
+        x_actual = x_next;
+        x_next = (x_actual + a / x_actual) / BigInt(2LL);
+    }
+    
+    return x_actual;
 }
 
 BigInt Factorial(int n) {
