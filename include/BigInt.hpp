@@ -75,8 +75,9 @@ public:
 
     int getNumDigits() const;
 
-    bool equal(const BigInt&  ) const;
-    bool LessThan(const BigInt&  ) const;
+    bool equal(const BigInt&) const;
+    bool LessThan(const BigInt&) const;
+    bool MoreThan(const BigInt&) const;
     void Print(std::ostream& os) const;
 
     friend std::ostream& operator << (std::ostream&, const BigInt&);

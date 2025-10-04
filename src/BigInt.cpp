@@ -492,12 +492,16 @@ int BigInt::compare(const BigInt& other) const {
     return 0;
 }
 
-bool BigInt::equal(const BigInt&) const {
-// pendiente
+bool BigInt::equal(const BigInt& other) const {
+    return this->compare(other) == 0;
 }
 
-bool BigInt::LessThan(const BigInt& ) const {
-// pendiente
+bool BigInt::LessThan(const BigInt& other) const {
+    return this->compare(other) < 0;
+}
+
+bool BigInt::MoreThan(const BigInt& other) const {
+    return this->compare(other) > 0;
 }
 
 void BigInt::Print(std::ostream& os) const {
