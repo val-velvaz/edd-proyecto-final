@@ -291,29 +291,6 @@ BigInt& BigInt::operator += (const BigInt& other) {
     return *this;
 }
 
-int BigInt::compare(const BigInt& other) const {
-    if (mySign != other.mySign) {
-        return mySign == positive ? 1 : -1;
-    }
-    if (myNumDigits != other.myNumDigits) {
-        return (myNumDigits > other.myNumDigits) ? 1 : -1;
-    }
-    for (int i = myNumDigits - 1; i >= 0; --i) {
-        if (myDigits[i] != other.myDigits[i]) {
-            return (myDigits[i] > other.myDigits[i]) ? 1 : -1;
-        }
-    }
-    return 0;
-}
-
-bool operator<(const BigInt& a, const BigInt& b) {
-    return a.compare(b) < 0;
-}
-
-bool operator >= (const BigInt& a, const BigInt& b) {
-    return !(a < b);
-}
-
 BigInt& BigInt::operator-=(const BigInt& other) {
     *this = *this - other;
     return *this;
@@ -333,4 +310,44 @@ BigInt operator*(const BigInt& a, const BigInt& b) {
     BigInt result;
 // pendiente
     return result;
+}
+
+// relacionales y de comparacion
+int BigInt::compare(const BigInt& other) const {
+    if (mySign != other.mySign) {
+        return mySign == positive ? 1 : -1;
+    }
+    if (myNumDigits != other.myNumDigits) {
+        return (myNumDigits > other.myNumDigits) ? 1 : -1;
+    }
+    for (int i = myNumDigits - 1; i >= 0; --i) {
+        if (myDigits[i] != other.myDigits[i]) {
+            return (myDigits[i] > other.myDigits[i]) ? 1 : -1;
+        }
+    }
+    return 0;
+}
+
+bool operator == (const BigInt& a, const BigInt& b) {
+    return a.compare(b) == 0;
+}
+
+bool operator != (const BigInt& a, const BigInt& b) {
+    return a.compare(b) != 0;
+}
+
+bool operator < (const BigInt& a, const BigInt& b) {
+    return a.compare(b) < 0;
+}
+
+bool operator > (const BigInt& a, const BigInt& b) {
+    return a.compare(b) > 0;
+}
+
+bool operator >= (const BigInt& a, const BigInt& b) {
+    return a.compare(b) >= 0;
+}
+
+bool operator <= (const BigInt& a, const BigInt& b) {
+    return a.compare(b) <= 0;
 }
