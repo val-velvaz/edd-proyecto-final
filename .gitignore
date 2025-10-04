@@ -1,0 +1,12 @@
+# Ignorar todos los archivos binarios
+*.exe
+*.dll
+*.obj
+*.o
+*.class
+*.pyc
+
+# Ignorar carpetas de compilación
+/build/
+/bin/
+/out/

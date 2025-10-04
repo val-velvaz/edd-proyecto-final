@@ -1,0 +1,55 @@
+CRITERIOS DE EVALUACIÓN DE EFICIENCIA DE ALGORITMOS DE ORDENAMIENTO
+--------------------------------------------------------------------
+No solo hay comparaciones; hay otras cosas que se 
+tienen que tener en cuenta al momento de evaluar.
+
+- Cantidad de evaluaciones
+- Cantidad de intercambios o asignaciones (no son lo mismo)
+    - Los intercambios se pueden pensar como tres asignaciones
+    - Cómo afecta a esto el constructor por movimiento?
+- Tiempo de ejecución
+    - El tiempo de ejecución interviene en otros elementos
+    - No es lo mismo iteración a recursión
+- Cantidad de memoria utilizada
+
+Para comparaciones burbuja, insert, select tienen la misma complejidad.
+Shell depende del tamaño del diferencial, pero la tendencia es n
+a la tres medios, o raiz cuadrada de n al cubo.
+
+Para 1000 elementos (comparaciones y intercambios o asignaciones):
+    - Bubble: 500,000   intercambios                 1,500,000
+    - Shell: 31,623     intercambios                 94,869
+    - Insert: 500,000   asignaciones                 500,000
+    - Select: 500,000   asignaciones/ asignaciones   2,000,000
+    - Merge: 9,966      asignaciones p/intercalacion 19,932 (merge tiene que copiar a un arreglo auxiliar)
+    - Quick: 9,966      intercambios|                14,949
+
+No se pueden comparar recursiones con iteraciones.
+Hay que establecer cuantas iteraciones o recursiones hace el algoritmo para 
+evaluar así su complejidad.
+
+Para merge se necesita dos veces el tamaño del arreglo, por dicho motivo, se duplica 
+la cantidad de memoria necesaria.
+
+Cantidad de memoria:
+- Bubble: o = n + 1
+- Shell: o = n + 1
+- Insert: o = n + 1
+- Select: o = n + 1
+- Merge: o = n * 2 + 1 registro por llamada recursiva
+- Quick: o = n + 1 + 1 registro por llamada recursiva
+
+QuickSort: las partidas en dos tienen cierta consecuencia. Porque las 
+partidas del arreglo no siempre seran donde lo esperamos, entonces el peor 
+caso de Quick sort es que esté ordenado.
+
+Esta es una invitación a evitar decir que "tal método es mejor que otros", 
+porque realmente esto depende de las circunstancias de lo que necesitemos.
+Hay opciones que dependiendo de lo que queremos hacer un método será mejor
+que otro.
+
+TAREA -------------------------------------------------------------------
+Hacer un arreglo grande de entero
+No combiene hacer 6 listas, sino 2: Una lista base y otra con la que se ordena.
+La diferencia de tiempo es el tiepmo que hicimos
+Hay un conflicto al momento de imprimir, porque el entero no tiene toString
