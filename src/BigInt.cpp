@@ -10,13 +10,11 @@
 bool BigInt::isNegative() const {
     if (this->mySign == negative) return true;
     return false;
-    // return mySing == negative;
 }
 
 bool BigInt::isPositive() const {
     if (this->isNegative() != true) return true;
     return false;
-    // return mySign == positive;
 }
 
 void BigInt::normalize() {
@@ -40,11 +38,10 @@ void BigInt::normalize() {
 
 BigInt::BigInt() {}
 
-BigInt::BigInt(long long& n){
+BigInt::BigInt(long long n){
     if (n > 0) {
         this->mySign = positive;
     } else if (n < 0) {
-        // pedo
         this->mySign = negative;
         n = -n;
     } else {
@@ -52,8 +49,6 @@ BigInt::BigInt(long long& n){
     }
 
     if (n == 0) {
-        // se recorre en orden inverso
-        // el digito en la posicion 0 del vector es el de las unidades
         this->myDigits.push_back(0);
     } else {
         while (n > 0) {
@@ -67,8 +62,8 @@ BigInt::BigInt(long long& n){
 BigInt::BigInt(const std::string& str) {
     try {
         myDigits.clear();
-        // detectar el signo
         size_t start = 0;
+        
         if (str[0] == '-') {
             mySign = negative;
             start = 1;
@@ -76,31 +71,39 @@ BigInt::BigInt(const std::string& str) {
             mySign = positive;
             start = 1;
         } else {
-            mySign = positive; // por defecto
+            mySign = positive;
         }
 
-        for (auto i = start; i < str.size(); i++) {
-            char c = str[i]; // obtener el caracter
+        if (start >= str.size()) {
+            throw std::invalid_argument("String vacío después del signo");
+        }
 
+        for (int i = str.size() - 1; i >= static_cast<int>(start); --i) {
+            char c = str[i];
+            
             if (!isdigit(c)) {
                 throw std::invalid_argument("Caracter no numerico");
             }
-
+            
             int digit = c - '0';
             myDigits.push_back(digit);
-
-
         }
-        while (myDigits.size() > 1 && myDigits[0] == 0) {
-                myDigits.erase(myDigits.begin());
-            }
 
         myNumDigits = static_cast<int>(myDigits.size());
+        normalize();
 
     } catch (const std::invalid_argument& e) {
         std::cerr << "Argumento invalido: " << e.what() << std::endl;
+        myDigits.clear();
+        myDigits.push_back(0);
+        myNumDigits = 1;
+        mySign = Sign::zero;
     } catch (const std::out_of_range& e) {
         std::cerr << "Fuera de rango: " << e.what() << std::endl;
+        myDigits.clear();
+        myDigits.push_back(0);
+        myNumDigits = 1;
+        mySign = Sign::zero;
     }
 }
 
@@ -126,21 +129,19 @@ BigInt::BigInt(const float& f) {
     this->normalize();
 }
 
-// constructor copia
 BigInt::BigInt(const BigInt& other)
     : myNumDigits(other.myNumDigits), myDigits(other.myDigits), mySign(other.mySign) {}
 
-// cosas por movimiento
 BigInt::BigInt(BigInt&& other) noexcept
     : myNumDigits(other.myNumDigits),
-    myDigits(std::move(other.myDigits)), // porque vector es dinamico
+    myDigits(std::move(other.myDigits)),
     mySign(other.mySign)
     {
         other.myNumDigits = 0;
         other.mySign = Sign::zero;
 }
 
-bool Null(const BigInt& other) { // para ver si es cero
+bool Null(const BigInt& other) {
     return other.mySign == BigInt::zero;
 }
 
@@ -156,7 +157,6 @@ int& BigInt::operator [] (const int index) {
     } return myDigits[index];
 }
 
-// operador de asignacion normal
 BigInt& BigInt::operator  = (const BigInt& other) {
     if (this != &other) {
         this->myNumDigits = other.myNumDigits;
@@ -177,16 +177,18 @@ BigInt& BigInt::operator = (BigInt&& other) noexcept {
 }
 
 BigInt& BigInt::operator ++ () {
-    *this += BigInt(1);
+    long long uno = 1;
+    *this += BigInt(uno);
     return *this;
 }
 
 BigInt& BigInt::operator -- () {
-    *this -= BigInt(1);
+    long long uno = 1;
+    *this -= BigInt(uno);
     return *this;
 }
 
-const BigInt BigInt::operator ++ (int dummy) { //dummy porque no se va a utilizar
+const BigInt BigInt::operator ++ (int dummy) {
     BigInt oldValue = *this;
     ++*this;
     return oldValue;
@@ -282,17 +284,71 @@ BigInt operator + (const BigInt& a, const BigInt& b) {
 
 BigInt operator - (const BigInt& a, const BigInt& b) {
     BigInt result;
+    
     if (b.mySign == BigInt::negative) {
-        result = a + b.Abs();
-    } else {
-        result = a + BigInt(-1) * b; // Placeholder
+        BigInt positiveB = b.Abs();
+        result = a + positiveB;
+        return result;
     }
+    
+    if (a.mySign == BigInt::negative && b.mySign == BigInt::positive) {
+        BigInt positiveA = a.Abs();
+        result = positiveA + b;
+        result.mySign = BigInt::negative;
+        result.normalize();
+        return result;
+    }
+    
+    if (a.mySign == BigInt::positive && b.mySign == BigInt::positive) {
+        if (a.Abs() >= b.Abs()) {
+            result.mySign = BigInt::positive;
+            int borrow = 0;
+            
+            for (size_t i = 0; i < a.myDigits.size(); ++i) {
+                int diff = a.myDigits[i] - borrow;
+                if (i < b.myDigits.size()) {
+                    diff -= b.myDigits[i];
+                }
+                
+                if (diff < 0) {
+                    diff += 10;
+                    borrow = 1;
+                } else {
+                    borrow = 0;
+                }
+                
+                result.myDigits.push_back(diff);
+            }
+        } else {
+            result.mySign = BigInt::negative;
+            int borrow = 0;
+            
+            for (size_t i = 0; i < b.myDigits.size(); ++i) {
+                int diff = b.myDigits[i] - borrow;
+                if (i < a.myDigits.size()) {
+                    diff -= a.myDigits[i];
+                }
+                
+                if (diff < 0) {
+                    diff += 10;
+                    borrow = 1;
+                } else {
+                    borrow = 0;
+                }
+                
+                result.myDigits.push_back(diff);
+            }
+        }
+    }
+    
+    result.normalize();
     return result;
 }
 
 BigInt operator * (const BigInt& a, const BigInt& b) {
+    long long cero = 0;
     if (a.mySign == BigInt::zero || b.mySign == BigInt::zero) {
-        return BigInt(0LL);
+        return BigInt(cero);
     }
 
     BigInt absA = a.Abs();
@@ -317,7 +373,6 @@ BigInt operator * (const BigInt& a, const BigInt& b) {
 
     result.myNumDigits = result.myDigits.size();
 
-    // determinar el signo del resultado
     if (a.mySign == b.mySign) {
         result.mySign = BigInt::positive;
     } else {
@@ -332,15 +387,18 @@ BigInt operator / (const BigInt& a, const BigInt& b) {
     if (b.mySign == BigInt::zero) {
         throw std::invalid_argument("Division by zero");
     }
+    long long cero = 0;
     if (a.Abs() < b.Abs()) {
-        return BigInt(0LL);
+        return BigInt(cero);
     }
 
     BigInt absA = a.Abs();
     BigInt absB = b.Abs();
 
     BigInt result;
+    result.mySign = BigInt::positive;
     BigInt currentDividend;
+    currentDividend.mySign = BigInt::positive;
 
     for (int i = absA.getNumDigits() - 1; i >= 0; --i) {
         currentDividend.myDigits.insert(currentDividend.myDigits.begin(), absA.myDigits[i]);
@@ -354,7 +412,8 @@ BigInt operator / (const BigInt& a, const BigInt& b) {
         result.myDigits.insert(result.myDigits.begin(), count);
     }
 
-    //signo
+    result.myNumDigits = result.myDigits.size();
+    
     if (a.mySign != b.mySign) {
         result.mySign = BigInt::negative;
     } else {
@@ -373,40 +432,68 @@ BigInt operator % (const BigInt& a, const BigInt& b) {
     BigInt quotient = a / b;
     BigInt result = a - (quotient * b);
     
+    result.normalize();
     return result;
 }
 
 BigInt operator ^ (const BigInt& a, const BigInt& b) {
     BigInt base = a;
     BigInt exp = b;
-    BigInt result(1LL); // 1
-
-    // exponente negativo y cero
+    
     if (b.isNegative()) {
-        // pendiente exponente negativos 
-        if (a.Abs() == BigInt(1LL)) {
-            return BigInt(1LL);
+        long long uno = 1;
+        BigInt one(uno);
+        if (a.Abs() == one) {
+            return one;
         }
-        return BigInt(0LL);
-    }
-
-    if (exp.mySign == BigInt::zero) {
-        return BigInt(1LL);
+        long long cero = 0;
+        return BigInt(cero);
     }
     
-    // positivo
-    BigInt absExp = exp.Abs(); 
-
-    while (absExp > BigInt(0LL)) {
-        if (absExp.isOdd()) { 
-            result = result * base;
-        }
-        base = base * base;
-        absExp = absExp / BigInt(2LL); 
+    if (exp.mySign == BigInt::zero) {
+        long long uno = 1;
+        return BigInt(uno);
     }
+    
+    if (base.mySign == BigInt::zero) {
+        long long cero = 0;
+        return BigInt(cero);
+    }
+    
+    long long uno = 1;
+    BigInt one(uno);
+    if (base == one) {
+        return one;
+    }
+    
+    long long menosUno = -1;
+    BigInt negOne(menosUno);
+    if (base == negOne) {
+        return exp.isOdd() ? negOne : one;
+    }
+    
+    BigInt result(uno);
+    BigInt absExp = exp.Abs();
+    BigInt currentBase = base.Abs();
+    
+    long long cero = 0;
+    BigInt zero(cero);
+    long long dos = 2;
+    BigInt two(dos);
+    
+    while (absExp > zero) {
+        if (absExp.isOdd()) {
+            result = result * currentBase;
+        }
+        currentBase = currentBase * currentBase;
+        absExp = absExp / two;
+    }
+    
     if (a.isNegative() && b.isOdd()) {
         result.mySign = BigInt::negative;
-    } return result;
+    }
+    
+    return result;
 }
 
 BigInt operator * (const BigInt& a, int num) {
@@ -450,7 +537,7 @@ std::string BigInt::toString() const {
     }
     if (mySign == zero)  return "0";
 
-    for (int i = myDigits.size() - 1; i >= 0; --i) { // OOOOK
+    for (int i = myDigits.size() - 1; i >= 0; --i) {
         result += '0' + myDigits[i];
     }
 
@@ -499,16 +586,28 @@ int BigInt::getNumDigits() const {
 
 int BigInt::compare(const BigInt& other) const {
     if (mySign != other.mySign) {
-        return mySign == positive ? 1 : -1;
+        if (mySign == zero && other.mySign == zero) return 0;
+        if (mySign == positive) return 1;
+        if (mySign == zero) return other.mySign == positive ? -1 : 1;
+        return -1;
     }
+    
+    if (mySign == zero) return 0;
+    
     if (myNumDigits != other.myNumDigits) {
-        return (myNumDigits > other.myNumDigits) ? 1 : -1;
+        bool isGreater = myNumDigits > other.myNumDigits;
+        if (mySign == negative) isGreater = !isGreater;
+        return isGreater ? 1 : -1;
     }
+    
     for (int i = myNumDigits - 1; i >= 0; --i) {
         if (myDigits[i] != other.myDigits[i]) {
-            return (myDigits[i] > other.myDigits[i]) ? 1 : -1;
+            bool isGreater = myDigits[i] > other.myDigits[i];
+            if (mySign == negative) isGreater = !isGreater;
+            return isGreater ? 1 : -1;
         }
     }
+    
     return 0;
 }
 
@@ -541,41 +640,87 @@ std::istream& operator >> (std::istream& is, BigInt& obj) {
 }
 
 BigInt sqrt(BigInt& a) {
-    // metodo de newton
-    // lo saque de internet
     if (a.isNegative()) {
-        throw std::invalid_argument("No se puede calcular la raiz negativa de un numero negativo");
+        throw std::invalid_argument("No se puede calcular la raiz cuadrada de un numero negativo");
     }
+    
     if (a.mySign == BigInt::zero) {
-        return BigInt(0LL);
+        long long cero = 0;
+        return BigInt(cero);
     }
     
-    BigInt x_actual;
-    if (a.getNumDigits() % 2 == 0) {
-        x_actual = BigInt("1" + std::string(a.getNumDigits() / 2, '0'));
-    } else {
-        x_actual = BigInt("3" + std::string(a.getNumDigits() / 2, '0'));
+    long long uno = 1;
+    BigInt one(uno);
+    if (a == one) {
+        return one;
     }
     
-    BigInt x_next = (x_actual + a / x_actual) / BigInt(2LL);
-
-    while (x_next < x_actual) {
+    long long diez = 10;
+    BigInt ten(diez);
+    if (a < ten) {
+        for (long long i = 2; i <= 3; i++) {
+            long long val = i;
+            BigInt test(val);
+            if (test * test == a) return test;
+            if (test * test > a) {
+                long long prevVal = i - 1;
+                return BigInt(prevVal);
+            }
+        }
+    }
+    
+    long long dos = 2;
+    BigInt two(dos);
+    BigInt x_actual = a / two;
+    
+    if (x_actual.mySign == BigInt::zero) {
+        x_actual = one;
+    }
+    
+    BigInt x_next;
+    int maxIterations = 1000;
+    int iterations = 0;
+    
+    while (iterations < maxIterations) {
+        if (x_actual.mySign == BigInt::zero) {
+            long long ceroVal = 0;
+            return BigInt(ceroVal);
+        }
+        
+        x_next = (x_actual + a / x_actual) / two;
+        
+        if (x_next >= x_actual) {
+            break;
+        }
+        
         x_actual = x_next;
-        x_next = (x_actual + a / x_actual) / BigInt(2LL);
+        iterations++;
     }
     
-    return x_actual;
+    BigInt candidato1 = x_actual;
+    BigInt candidato2 = x_actual + one;
+    
+    BigInt cuadrado1 = candidato1 * candidato1;
+    BigInt cuadrado2 = candidato2 * candidato2;
+    
+    if (cuadrado2 <= a) {
+        return candidato2;
+    }
+    
+    return candidato1;
 }
 
 BigInt Factorial(int n) {
-        // para n=0 y n=1
     if (n < 0) {
         throw std::invalid_argument("Cannot compute factorial of a negative number.");
     }
+    
+    long long uno = 1;
     if (n == 0 || n == 1) {
-        return BigInt(1LL);
+        return BigInt(uno);
     }
-    BigInt result(1LL);
+    
+    BigInt result(uno);
     
     for (int i = 2; i <= n; ++i) {
         BigInt temp(static_cast<long long>(i));

@@ -23,7 +23,7 @@ private:
 public:
     // usar explicit para constructores de conversion
     BigInt();
-    explicit BigInt(long long&); // int64_t
+    explicit BigInt(long long); // int64_t
     explicit BigInt(const std::string&);
     explicit BigInt(const float&);
     BigInt(const BigInt&); // copiar los datos que no son dinamicos
@@ -84,13 +84,14 @@ public:
     friend std::istream& operator >> (std::istream&, BigInt&);
 
     friend BigInt sqrt(BigInt& a);
-    friend BigInt Factorial(int n);
 
     int compare(const BigInt&) const;
     static int compare(const BigInt&, const BigInt&);
 
     bool isOdd() const;
 };
+
+BigInt Factorial(int n);
 
 
 
