@@ -564,8 +564,8 @@ BigInt Factorial(int n) {
     return result;
 }
 
-int compare(const BigInt&, const BigInt&) {
-// pendiente
+int compare(const BigInt& a, const BigInt& b) {
+    return a.compare(b);
 }
 
 bool BigInt::isOdd() const {
