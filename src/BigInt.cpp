@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <cmath>
 
 #include "BigInt.hpp"
 
@@ -469,7 +470,6 @@ int BigInt::ToInt() const {
     if (myNumDigits > 10 || (myNumDigits == 10 && myDigits[9] > 2)) {
         throw std::overflow_error("Conversion to int would overflow");
     }
-
     int result = 0;
     for (size_t i = 0; i < myDigits.size(); ++i) {
         result += myDigits[i] * pow(10, i);
@@ -482,7 +482,15 @@ int BigInt::ToInt() const {
 }
 
 double BigInt::toDouble() const {
-// pendiente
+    double result = 0.0;
+    for (size_t i = 0; i < myDigits.size(); ++i) {
+        result += myDigits[i] * pow(10, i);
+    }
+
+    if (mySign == negative) {
+        return -result;
+    }
+    return result;
 }
 
 int BigInt::getNumDigits() const {
