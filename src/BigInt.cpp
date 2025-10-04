@@ -10,13 +10,11 @@
 bool BigInt::isNegative() const {
     if (this->mySign == negative) return true;
     return false;
-    // return mySing == negative;
 }
 
 bool BigInt::isPositive() const {
     if (this->isNegative() != true) return true;
     return false;
-    // return mySign == positive;
 }
 
 void BigInt::normalize() {
@@ -40,11 +38,10 @@ void BigInt::normalize() {
 
 BigInt::BigInt() {}
 
-BigInt::BigInt(long long& n){
+BigInt::BigInt(long long n){
     if (n > 0) {
         this->mySign = positive;
     } else if (n < 0) {
-        // pedo
         this->mySign = negative;
         n = -n;
     } else {
@@ -52,8 +49,6 @@ BigInt::BigInt(long long& n){
     }
 
     if (n == 0) {
-        // se recorre en orden inverso
-        // el digito en la posicion 0 del vector es el de las unidades
         this->myDigits.push_back(0);
     } else {
         while (n > 0) {
@@ -69,7 +64,6 @@ BigInt::BigInt(const std::string& str) {
         myDigits.clear();
         size_t start = 0;
         
-        // detectar signo
         if (str[0] == '-') {
             mySign = negative;
             start = 1;
@@ -80,7 +74,6 @@ BigInt::BigInt(const std::string& str) {
             mySign = positive;
         }
 
-        // validar que hay al menos un dígito
         if (start >= str.size()) {
             throw std::invalid_argument("String vacío después del signo");
         }
@@ -136,21 +129,19 @@ BigInt::BigInt(const float& f) {
     this->normalize();
 }
 
-// constructor copia
 BigInt::BigInt(const BigInt& other)
     : myNumDigits(other.myNumDigits), myDigits(other.myDigits), mySign(other.mySign) {}
 
-// cosas por movimiento
 BigInt::BigInt(BigInt&& other) noexcept
     : myNumDigits(other.myNumDigits),
-    myDigits(std::move(other.myDigits)), // porque vector es dinamico
+    myDigits(std::move(other.myDigits)),
     mySign(other.mySign)
     {
         other.myNumDigits = 0;
         other.mySign = Sign::zero;
 }
 
-bool Null(const BigInt& other) { // para ver si es cero
+bool Null(const BigInt& other) {
     return other.mySign == BigInt::zero;
 }
 
@@ -166,7 +157,6 @@ int& BigInt::operator [] (const int index) {
     } return myDigits[index];
 }
 
-// operador de asignacion normal
 BigInt& BigInt::operator  = (const BigInt& other) {
     if (this != &other) {
         this->myNumDigits = other.myNumDigits;
@@ -187,16 +177,18 @@ BigInt& BigInt::operator = (BigInt&& other) noexcept {
 }
 
 BigInt& BigInt::operator ++ () {
-    *this += BigInt(1);
+    long long uno = 1;
+    *this += BigInt(uno);
     return *this;
 }
 
 BigInt& BigInt::operator -- () {
-    *this -= BigInt(1);
+    long long uno = 1;
+    *this -= BigInt(uno);
     return *this;
 }
 
-const BigInt BigInt::operator ++ (int dummy) { //dummy porque no se va a utilizar
+const BigInt BigInt::operator ++ (int dummy) {
     BigInt oldValue = *this;
     ++*this;
     return oldValue;
@@ -293,14 +285,12 @@ BigInt operator + (const BigInt& a, const BigInt& b) {
 BigInt operator - (const BigInt& a, const BigInt& b) {
     BigInt result;
     
-    // a - (-b) = a + b
     if (b.mySign == BigInt::negative) {
         BigInt positiveB = b.Abs();
         result = a + positiveB;
         return result;
     }
     
-    //  -a - b = -(a + b)
     if (a.mySign == BigInt::negative && b.mySign == BigInt::positive) {
         BigInt positiveA = a.Abs();
         result = positiveA + b;
@@ -309,7 +299,6 @@ BigInt operator - (const BigInt& a, const BigInt& b) {
         return result;
     }
     
-    //  a - b con ambos positivos o ambos negativos
     if (a.mySign == BigInt::positive && b.mySign == BigInt::positive) {
         if (a.Abs() >= b.Abs()) {
             result.mySign = BigInt::positive;
@@ -331,7 +320,6 @@ BigInt operator - (const BigInt& a, const BigInt& b) {
                 result.myDigits.push_back(diff);
             }
         } else {
-            // a < b: resultado negativo, calcular b - a
             result.mySign = BigInt::negative;
             int borrow = 0;
             
@@ -358,8 +346,9 @@ BigInt operator - (const BigInt& a, const BigInt& b) {
 }
 
 BigInt operator * (const BigInt& a, const BigInt& b) {
+    long long cero = 0;
     if (a.mySign == BigInt::zero || b.mySign == BigInt::zero) {
-        return BigInt(0LL);
+        return BigInt(cero);
     }
 
     BigInt absA = a.Abs();
@@ -384,7 +373,6 @@ BigInt operator * (const BigInt& a, const BigInt& b) {
 
     result.myNumDigits = result.myDigits.size();
 
-    // determinar el signo del resultado
     if (a.mySign == b.mySign) {
         result.mySign = BigInt::positive;
     } else {
@@ -399,15 +387,18 @@ BigInt operator / (const BigInt& a, const BigInt& b) {
     if (b.mySign == BigInt::zero) {
         throw std::invalid_argument("Division by zero");
     }
+    long long cero = 0;
     if (a.Abs() < b.Abs()) {
-        return BigInt(0LL);
+        return BigInt(cero);
     }
 
     BigInt absA = a.Abs();
     BigInt absB = b.Abs();
 
     BigInt result;
+    result.mySign = BigInt::positive;
     BigInt currentDividend;
+    currentDividend.mySign = BigInt::positive;
 
     for (int i = absA.getNumDigits() - 1; i >= 0; --i) {
         currentDividend.myDigits.insert(currentDividend.myDigits.begin(), absA.myDigits[i]);
@@ -421,7 +412,8 @@ BigInt operator / (const BigInt& a, const BigInt& b) {
         result.myDigits.insert(result.myDigits.begin(), count);
     }
 
-    //signo
+    result.myNumDigits = result.myDigits.size();
+    
     if (a.mySign != b.mySign) {
         result.mySign = BigInt::negative;
     } else {
@@ -449,42 +441,52 @@ BigInt operator ^ (const BigInt& a, const BigInt& b) {
     BigInt exp = b;
     
     if (b.isNegative()) {
-        if (a.Abs() == BigInt(1LL)) {
-            return BigInt(1LL);
+        long long uno = 1;
+        BigInt one(uno);
+        if (a.Abs() == one) {
+            return one;
         }
-        return BigInt(0LL); // truncamiento
+        long long cero = 0;
+        return BigInt(cero);
     }
     
     if (exp.mySign == BigInt::zero) {
-        return BigInt(1LL);
+        long long uno = 1;
+        return BigInt(uno);
     }
     
-    // 0^n = 0 (para n > 0)
     if (base.mySign == BigInt::zero) {
-        return BigInt(0LL);
+        long long cero = 0;
+        return BigInt(cero);
     }
     
-    // 1^n = 1
-    if (base == BigInt(1LL)) {
-        return BigInt(1LL);
+    long long uno = 1;
+    BigInt one(uno);
+    if (base == one) {
+        return one;
     }
     
-    // (-1)^n depende de la paridad de n
-    if (base == BigInt(-1LL)) {
-        return exp.isOdd() ? BigInt(-1LL) : BigInt(1LL);
+    long long menosUno = -1;
+    BigInt negOne(menosUno);
+    if (base == negOne) {
+        return exp.isOdd() ? negOne : one;
     }
     
-    // Algoritmo de exponenciación rápida (binaria)
-    BigInt result(1LL);
+    BigInt result(uno);
     BigInt absExp = exp.Abs();
     BigInt currentBase = base.Abs();
     
-    while (absExp > BigInt(0LL)) {
+    long long cero = 0;
+    BigInt zero(cero);
+    long long dos = 2;
+    BigInt two(dos);
+    
+    while (absExp > zero) {
         if (absExp.isOdd()) {
             result = result * currentBase;
         }
         currentBase = currentBase * currentBase;
-        absExp = absExp / BigInt(2LL);
+        absExp = absExp / two;
     }
     
     if (a.isNegative() && b.isOdd()) {
@@ -535,7 +537,7 @@ std::string BigInt::toString() const {
     }
     if (mySign == zero)  return "0";
 
-    for (int i = myDigits.size() - 1; i >= 0; --i) { // OOOOK
+    for (int i = myDigits.size() - 1; i >= 0; --i) {
         result += '0' + myDigits[i];
     }
 
@@ -587,7 +589,7 @@ int BigInt::compare(const BigInt& other) const {
         if (mySign == zero && other.mySign == zero) return 0;
         if (mySign == positive) return 1;
         if (mySign == zero) return other.mySign == positive ? -1 : 1;
-        return -1; 
+        return -1;
     }
     
     if (mySign == zero) return 0;
@@ -606,7 +608,7 @@ int BigInt::compare(const BigInt& other) const {
         }
     }
     
-    return 0; // iguales
+    return 0;
 }
 
 bool BigInt::equal(const BigInt& other) const {
@@ -643,26 +645,36 @@ BigInt sqrt(BigInt& a) {
     }
     
     if (a.mySign == BigInt::zero) {
-        return BigInt(0LL);
+        long long cero = 0;
+        return BigInt(cero);
     }
     
-    if (a == BigInt(1LL)) {
-        return BigInt(1LL);
+    long long uno = 1;
+    BigInt one(uno);
+    if (a == one) {
+        return one;
     }
     
-    if (a < BigInt(10LL)) {
+    long long diez = 10;
+    BigInt ten(diez);
+    if (a < ten) {
         for (long long i = 2; i <= 3; i++) {
-            BigInt test(i);
+            long long val = i;
+            BigInt test(val);
             if (test * test == a) return test;
-            if (test * test > a) return BigInt(i - 1);
+            if (test * test > a) {
+                long long prevVal = i - 1;
+                return BigInt(prevVal);
+            }
         }
     }
     
-
-    BigInt x_actual = a / BigInt(2LL); // Empezar con a/2
+    long long dos = 2;
+    BigInt two(dos);
+    BigInt x_actual = a / two;
     
     if (x_actual.mySign == BigInt::zero) {
-        x_actual = BigInt(1LL);
+        x_actual = one;
     }
     
     BigInt x_next;
@@ -670,10 +682,13 @@ BigInt sqrt(BigInt& a) {
     int iterations = 0;
     
     while (iterations < maxIterations) {
-        // x_next = (x_actual + a / x_actual) / 2
-        x_next = (x_actual + a / x_actual) / BigInt(2LL);
+        if (x_actual.mySign == BigInt::zero) {
+            long long ceroVal = 0;
+            return BigInt(ceroVal);
+        }
         
-        // cuando x_next >= x_actual
+        x_next = (x_actual + a / x_actual) / two;
+        
         if (x_next >= x_actual) {
             break;
         }
@@ -683,7 +698,7 @@ BigInt sqrt(BigInt& a) {
     }
     
     BigInt candidato1 = x_actual;
-    BigInt candidato2 = x_actual + BigInt(1LL);
+    BigInt candidato2 = x_actual + one;
     
     BigInt cuadrado1 = candidato1 * candidato1;
     BigInt cuadrado2 = candidato2 * candidato2;
@@ -696,14 +711,16 @@ BigInt sqrt(BigInt& a) {
 }
 
 BigInt Factorial(int n) {
-        // para n=0 y n=1
     if (n < 0) {
         throw std::invalid_argument("Cannot compute factorial of a negative number.");
     }
+    
+    long long uno = 1;
     if (n == 0 || n == 1) {
-        return BigInt(1LL);
+        return BigInt(uno);
     }
-    BigInt result(1LL);
+    
+    BigInt result(uno);
     
     for (int i = 2; i <= n; ++i) {
         BigInt temp(static_cast<long long>(i));

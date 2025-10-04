@@ -23,7 +23,7 @@ private:
 public:
     // usar explicit para constructores de conversion
     BigInt();
-    explicit BigInt(long long&); // int64_t
+    explicit BigInt(long long); // int64_t
     explicit BigInt(const std::string&);
     explicit BigInt(const float&);
     BigInt(const BigInt&); // copiar los datos que no son dinamicos
