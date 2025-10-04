@@ -84,13 +84,14 @@ public:
     friend std::istream& operator >> (std::istream&, BigInt&);
 
     friend BigInt sqrt(BigInt& a);
-    friend BigInt Factorial(int n);
 
     int compare(const BigInt&) const;
     static int compare(const BigInt&, const BigInt&);
 
     bool isOdd() const;
 };
+
+BigInt Factorial(int n);
 
 
 
