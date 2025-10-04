@@ -365,8 +365,13 @@ BigInt operator / (const BigInt& a, const BigInt& b) {
 }
 
 BigInt operator % (const BigInt& a, const BigInt& b) {
-    BigInt result;
-// pendiente
+    if (b.mySign == BigInt::zero) {
+        throw std::invalid_argument("Modulo by zero");
+    }
+
+    BigInt quotient = a / b;
+    BigInt result = a - (quotient * b);
+    
     return result;
 }
 
