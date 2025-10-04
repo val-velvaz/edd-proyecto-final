@@ -2,9 +2,40 @@
 #include <new>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include "BigInt.hpp"
 
+bool BigInt::isNegative() const {
+    if (this->mySign == negative) return true;
+    return false;
+    // return mySing == negative;
+}
+
+bool BigInt::isPositive() const {
+    if (this->isNegative() != true) return true;
+    return false;
+    // return mySign == positive;
+}
+
+void BigInt::normalize() {
+    if (myDigits.empty()) {
+        myDigits.push_back(0);
+        myNumDigits = 1;
+        mySign = Sign::zero;
+        return;
+    }
+
+    while (myDigits.size() > 1 && myDigits.back() == 0) {
+        myDigits.pop_back();
+    }
+
+    myNumDigits = myDigits.size();
+
+    if (myNumDigits == 1 && myDigits[0] == 0) {
+        mySign = Sign::zero;
+    }
+}
 
 BigInt::BigInt() {}
 
@@ -14,7 +45,7 @@ BigInt::BigInt(long long& n){
     } else if (n < 0) {
         // pedo
         this->mySign = negative;
-        n = -n; 
+        n = -n;
     } else {
         this->mySign = zero;
     }
@@ -32,28 +63,10 @@ BigInt::BigInt(long long& n){
     this->myNumDigits = this->myDigits.size();
 }
 
-// constructor copia
-BigInt::BigInt(const BigInt& other)
-    : myNumDigits(other.myNumDigits), myDigits(other.myDigits), mySign(other.mySign) {}
-
-std::string BigInt::toString() const {
-    std::string result = "";
-    if (mySign == negative) {
-        result += "-";
-    }
-    if (mySign == zero)  return "0";
-
-    for (int i = myDigits.size() - 1; i >= 0; --i) { // OOOOK
-        result += '0' + myDigits[i];
-    }
-
-    return result;
-}
-
 BigInt::BigInt(const std::string& str) {
     try {
         myDigits.clear();
-         // detectar el signo
+        // detectar el signo
         size_t start = 0;
         if (str[0] == '-') {
             mySign = negative;
@@ -75,7 +88,7 @@ BigInt::BigInt(const std::string& str) {
             int digit = c - '0';
             myDigits.push_back(digit);
 
-            
+
         }
         while (myDigits.size() > 1 && myDigits[0] == 0) {
                 myDigits.erase(myDigits.begin());
@@ -112,12 +125,54 @@ BigInt::BigInt(const float& f) {
     this->normalize();
 }
 
-void BigInt::Print(std::ostream& os) const {
-    os << toString();
+// constructor copia
+BigInt::BigInt(const BigInt& other)
+    : myNumDigits(other.myNumDigits), myDigits(other.myDigits), mySign(other.mySign) {}
+
+// cosas por movimiento
+BigInt::BigInt(BigInt&& other) noexcept
+    : myNumDigits(other.myNumDigits),
+    myDigits(std::move(other.myDigits)), // porque vector es dinamico
+    mySign(other.mySign)
+    {
+        other.myNumDigits = 0;
+        other.mySign = Sign::zero;
 }
 
-int BigInt::getNumDigits() const {
-    return static_cast<int>(myDigits.size());
+bool Null(const BigInt& other) { // para ver si es cero
+    return other.mySign == BigInt::zero;
+}
+
+int BigInt::operator [] (const int index) const {
+    if (myDigits.size() <= index || index < 0) {
+        throw std::out_of_range("Indice fuera de rango");
+    } return myDigits[index];
+}
+
+int& BigInt::operator [] (const int index) {
+    if (myDigits.size() <= index || index < 0) {
+        throw std::out_of_range("Indice fuera de rango");
+    } return myDigits[index];
+}
+
+// operador de asignacion normal
+BigInt& BigInt::operator  = (const BigInt& other) {
+    if (this != &other) {
+        this->myNumDigits = other.myNumDigits;
+        this->myDigits = other.myDigits;
+        this->mySign = other.mySign;
+    } return *this;
+}
+
+BigInt& BigInt::operator = (BigInt&& other) noexcept {
+    if (this != &other) {
+        this->myDigits = std::move(other.myDigits);
+        this->myNumDigits = other.myNumDigits;
+        this->mySign = other.mySign;
+
+        other.myNumDigits = 0;
+        other.mySign = Sign::zero;
+    } return *this;
 }
 
 BigInt& BigInt::operator ++ () {
@@ -140,93 +195,6 @@ const BigInt BigInt::operator -- (int dummy) {
     BigInt oldValue = *this;
     --*this;
     return oldValue;
-}
-
-// operador de asignacion normal
-BigInt& BigInt::operator  = (const BigInt& other) {
-    if (this != &other) {
-        this->myNumDigits = other.myNumDigits;
-        this->myDigits = other.myDigits;
-        this->mySign = other.mySign;
-    } return *this;
-}
-
-// cosas por movimiento
-BigInt::BigInt(BigInt&& other) noexcept 
-    : myNumDigits(other.myNumDigits), 
-    myDigits(std::move(other.myDigits)), // porque vector es dinamico
-    mySign(other.mySign)
-    {
-        other.myNumDigits = 0;
-        other.mySign = Sign::zero;
-}
-
-BigInt& BigInt::operator = (BigInt&& other) noexcept {
-    if (this != &other) {
-        this->myDigits = std::move(other.myDigits);
-        this->myNumDigits = other.myNumDigits;
-        this->mySign = other.mySign;
-
-        other.myNumDigits = 0;
-        other.mySign = Sign::zero;
-    } return *this;
-}
-
-bool BigInt::isNegative() const {
-    if (this->mySign == negative) return true;
-    return false;
-    // return mySing == negative;
-}
-
-bool BigInt::isPositive() const {
-    if (this->isNegative() != true) return true;
-    return false;
-    // return mySign == positive;
-}
-
-bool Null(const BigInt& other) { // para ver si es cero
-    return other.mySign == BigInt::zero;
-}
-
-int BigInt::operator [] (const int index) const {
-    if (myDigits.size() <= index || index < 0) {
-        throw std::out_of_range("Indice fuera de rango");
-    } return myDigits[index];
-}
-
-int& BigInt::operator [] (const int index) {
-    if (myDigits.size() <= index || index < 0) {
-        throw std::out_of_range("Indice fuera de rango");
-    } return myDigits[index];
-}
-
-void BigInt::normalize() {
-    if (myDigits.empty()) {
-        myDigits.push_back(0);
-        myNumDigits = 1;
-        mySign = Sign::zero;
-        return;
-    }
-
-    while (myDigits.size() > 1 && myDigits.back() == 0) {
-        myDigits.pop_back();
-    }
-
-    myNumDigits = myDigits.size();
-
-    if (myNumDigits == 1 && myDigits[0] == 0) {
-        mySign = Sign::zero;
-    }
-}
-
-
-BigInt BigInt::Abs() const {
-    BigInt temp = *this;
-    if (temp.mySign == negative) {
-        temp.mySign = positive;
-    }
-    temp.normalize();
-    return temp;
 }
 
 BigInt& BigInt::operator += (const BigInt& other) {
@@ -316,14 +284,46 @@ BigInt operator - (const BigInt& a, const BigInt& b) {
     if (b.mySign == BigInt::negative) {
         result = a + b.Abs();
     } else {
-        result = a + BigInt(-1) * b; // Placeholder 
+        result = a + BigInt(-1) * b; // Placeholder
     }
     return result;
 }
 
 BigInt operator * (const BigInt& a, const BigInt& b) {
+    if (a.mySign == BigInt::zero || b.mySign == BigInt::zero) {
+        return BigInt(0LL);
+    }
+
+    BigInt absA = a.Abs();
+    BigInt absB = b.Abs();
     BigInt result;
-// pendiente
+
+    result.myDigits.assign(absA.myDigits.size() + absB.myDigits.size(), 0);
+
+    for (size_t i = 0; i < absA.myDigits.size(); ++i) {
+        int carry = 0;
+        for (size_t j = 0; j < absB.myDigits.size() || carry; ++j) {
+            long long currentDigit = result.myDigits[i + j];
+            if (j < absB.myDigits.size()) {
+                currentDigit += (long long)absA.myDigits[i] * absB.myDigits[j];
+            }
+            currentDigit += carry;
+
+            result.myDigits[i + j] = currentDigit % 10;
+            carry = currentDigit / 10;
+        }
+    }
+
+    result.myNumDigits = result.myDigits.size();
+
+    // determinar el signo del resultado
+    if (a.mySign == b.mySign) {
+        result.mySign = BigInt::positive;
+    } else {
+        result.mySign = BigInt::negative;
+    }
+
+    result.normalize();
     return result;
 }
 
@@ -344,28 +344,13 @@ BigInt operator ^ (const BigInt& a, const BigInt& b) {
 // pendiente
     return result;
 }
-// relacionales y de comparacion
-int BigInt::compare(const BigInt& other) const {
-    if (mySign != other.mySign) {
-        return mySign == positive ? 1 : -1;
-    }
-    if (myNumDigits != other.myNumDigits) {
-        return (myNumDigits > other.myNumDigits) ? 1 : -1;
-    }
-    for (int i = myNumDigits - 1; i >= 0; --i) {
-        if (myDigits[i] != other.myDigits[i]) {
-            return (myDigits[i] > other.myDigits[i]) ? 1 : -1;
-        }
-    }
-    return 0;
+
+BigInt operator * (const BigInt& a, int num) {
+// pendiente
 }
 
-BigInt operator * (const BigInt&  , int num) {
-
-}
-
-BigInt operator * (int num, const BigInt&) {
-
+BigInt operator * (int num, const BigInt& a) {
+// pendiente
 }
 
 bool operator == (const BigInt& a, const BigInt& b) {
@@ -392,37 +377,84 @@ bool operator <= (const BigInt& a, const BigInt& b) {
     return a.compare(b) <= 0;
 }
 
-bool BigInt::equal(const BigInt&) const {
+std::string BigInt::toString() const {
+    std::string result = "";
+    if (mySign == negative) {
+        result += "-";
+    }
+    if (mySign == zero)  return "0";
 
+    for (int i = myDigits.size() - 1; i >= 0; --i) { // OOOOK
+        result += '0' + myDigits[i];
+    }
+
+    return result;
 }
 
-bool BigInt::LessThan(const BigInt&  ) const {
-
+BigInt BigInt::Abs() const {
+    BigInt temp = *this;
+    if (temp.mySign == negative) {
+        temp.mySign = positive;
+    }
+    temp.normalize();
+    return temp;
 }
 
 int BigInt::ToInt() const {
-
+// pendiente
 }
 
 double BigInt::toDouble() const {
+// pendiente
+}
 
+int BigInt::getNumDigits() const {
+    return static_cast<int>(myDigits.size());
+}
+
+int BigInt::compare(const BigInt& other) const {
+    if (mySign != other.mySign) {
+        return mySign == positive ? 1 : -1;
+    }
+    if (myNumDigits != other.myNumDigits) {
+        return (myNumDigits > other.myNumDigits) ? 1 : -1;
+    }
+    for (int i = myNumDigits - 1; i >= 0; --i) {
+        if (myDigits[i] != other.myDigits[i]) {
+            return (myDigits[i] > other.myDigits[i]) ? 1 : -1;
+        }
+    }
+    return 0;
+}
+
+bool BigInt::equal(const BigInt&) const {
+// pendiente
+}
+
+bool BigInt::LessThan(const BigInt& ) const {
+// pendiente
+}
+
+void BigInt::Print(std::ostream& os) const {
+    os << toString();
 }
 
 std::ostream& operator << (std::ostream&, const BigInt&) {
-
+// pendiente
 }
-std::istream& operator >> (std::istream&, BigInt&) {
 
+std::istream& operator >> (std::istream&, BigInt&) {
+// pendiente
 }
 
 BigInt sqrt(BigInt& a) {
-
+// pendiente
 }
 
 BigInt Factorial(int n) {
-
+// pendiente
 }
 
 int compare(const BigInt&, const BigInt&) {
-    
+// pendiente
 }
