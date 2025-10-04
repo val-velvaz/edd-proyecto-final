@@ -229,6 +229,31 @@ BigInt BigInt::Abs() const {
     return temp;
 }
 
+BigInt& BigInt::operator += (const BigInt& other) {
+    *this = *this + other;
+    return *this;
+}
+
+BigInt& BigInt::operator -= (const BigInt& other) {
+    *this = *this - other;
+    return *this;
+}
+
+BigInt& BigInt::operator *= (const BigInt& other) {
+    *this = *this * other;
+    return *this;
+}
+
+BigInt& BigInt::operator /= (const BigInt& other) {
+    *this = *this / other;
+    return *this;
+}
+
+BigInt& BigInt::operator %= (const BigInt& other) {
+    *this = *this - other;
+    return *this;
+}
+
 BigInt operator + (const BigInt& a, const BigInt& b) {
     BigInt result;
 
@@ -286,17 +311,7 @@ BigInt operator + (const BigInt& a, const BigInt& b) {
     return result;
 }
 
-BigInt& BigInt::operator += (const BigInt& other) {
-    *this = *this + other;
-    return *this;
-}
-
-BigInt& BigInt::operator-=(const BigInt& other) {
-    *this = *this - other;
-    return *this;
-}
-
-BigInt operator-(const BigInt& a, const BigInt& b) {
+BigInt operator - (const BigInt& a, const BigInt& b) {
     BigInt result;
     if (b.mySign == BigInt::negative) {
         result = a + b.Abs();
@@ -306,12 +321,29 @@ BigInt operator-(const BigInt& a, const BigInt& b) {
     return result;
 }
 
-BigInt operator*(const BigInt& a, const BigInt& b) {
+BigInt operator * (const BigInt& a, const BigInt& b) {
     BigInt result;
 // pendiente
     return result;
 }
 
+BigInt operator / (const BigInt& a, const BigInt& b) {
+    BigInt result;
+// pendiente
+    return result;
+}
+
+BigInt operator % (const BigInt& a, const BigInt& b) {
+    BigInt result;
+// pendiente
+    return result;
+}
+
+BigInt operator ^ (const BigInt& a, const BigInt& b) {
+    BigInt result;
+// pendiente
+    return result;
+}
 // relacionales y de comparacion
 int BigInt::compare(const BigInt& other) const {
     if (mySign != other.mySign) {
@@ -326,6 +358,14 @@ int BigInt::compare(const BigInt& other) const {
         }
     }
     return 0;
+}
+
+BigInt operator * (const BigInt&  , int num) {
+
+}
+
+BigInt operator * (int num, const BigInt&) {
+
 }
 
 bool operator == (const BigInt& a, const BigInt& b) {
@@ -350,4 +390,39 @@ bool operator >= (const BigInt& a, const BigInt& b) {
 
 bool operator <= (const BigInt& a, const BigInt& b) {
     return a.compare(b) <= 0;
+}
+
+bool BigInt::equal(const BigInt&) const {
+
+}
+
+bool BigInt::LessThan(const BigInt&  ) const {
+
+}
+
+int BigInt::ToInt() const {
+
+}
+
+double BigInt::toDouble() const {
+
+}
+
+std::ostream& operator << (std::ostream&, const BigInt&) {
+
+}
+std::istream& operator >> (std::istream&, BigInt&) {
+
+}
+
+BigInt sqrt(BigInt& a) {
+
+}
+
+BigInt Factorial(int n) {
+
+}
+
+int compare(const BigInt&, const BigInt&) {
+    
 }
