@@ -41,6 +41,7 @@ std::string BigInt::toString() const {
     if (mySign == negative) {
         result += "-";
     }
+    if (mySign == zero)  return "0";
 
     for (int d : myDigits) {   // recorrido normal
         result += '0' + d;
@@ -178,6 +179,26 @@ int& BigInt::operator [] (const int index) {
     } return myDigits[index];
 }
 
+void BigInt::normalize() {
+    if (myDigits.empty()) {
+        myDigits.push_back(0);
+        myNumDigits = 1;
+        mySign = Sign::zero;
+        return;
+    }
+
+    while (myDigits.size() > 1 && myDigits.back() == 0) {
+        myDigits.pop_back();
+    }
+
+    myNumDigits = myDigits.size();
+
+    if (myNumDigits == 1 && myDigits[0] == 0) {
+        mySign = Sign::zero;
+    }
+}
+
+
 BigInt BigInt::Abs() const {
     BigInt temp = *this;
     if (temp.mySign == negative) {
@@ -187,15 +208,64 @@ BigInt BigInt::Abs() const {
     return temp;
 }
 
-BigInt& BigInt::operator += (const BigInt& other) {
-    // manejar los tres casos posibles
-    *this = *this + other;
-    return *this;
+BigInt operator + (const BigInt& a, const BigInt& b) {
+    BigInt result;
+
+    if (a.mySign == b.mySign) {
+        result.mySign = a.mySign;
+
+        int carry = 0;
+        size_t n = std::max(a.myDigits.size(), b.myDigits.size());
+
+        for (size_t i = 0; i < n || carry; ++i) {
+            int sum = carry;
+            if (i < a.myDigits.size()) sum += a.myDigits[i];
+            if (i < b.myDigits.size()) sum += b.myDigits[i];
+
+            if (i < result.myDigits.size())
+                result.myDigits[i] = sum % 10;
+            else
+                result.myDigits.push_back(sum % 10);
+
+            carry = sum / 10;
+        }
+    }
+    else {
+        const BigInt *larger, *smaller;
+        bool resultSign;
+
+        if (a.Abs() >= b.Abs()) {
+            larger = &a;
+            smaller = &b;
+            resultSign = a.mySign == BigInt::positive;
+        } else {
+            larger = &b;
+            smaller = &a;
+            resultSign = b.mySign == BigInt::positive;
+        }
+
+        result.mySign = resultSign ? BigInt::positive : BigInt::negative;
+
+        int borrow = 0;
+        for (size_t i = 0; i < larger->myDigits.size(); ++i) {
+            int diff = larger->myDigits[i] - borrow;
+            if (i < smaller->myDigits.size()) diff -= smaller->myDigits[i];
+
+            if (diff < 0) {
+                diff += 10;
+                borrow = 1;
+            } else {
+                borrow = 0;
+            }
+
+            result.myDigits.push_back(diff);
+        }
+    }
+    result.normalize();
+    return result;
 }
 
-BigInt operator + (const BigInt& a, const BigInt& b) {
-    BigInt temp;
-    temp = a;
-    temp += b;
-    return temp;
+BigInt& BigInt::operator += (const BigInt& other) {
+    *this = *this + other;
+    return *this;
 }
