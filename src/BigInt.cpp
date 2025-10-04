@@ -508,12 +508,16 @@ void BigInt::Print(std::ostream& os) const {
     os << toString();
 }
 
-std::ostream& operator << (std::ostream&, const BigInt&) {
-// pendiente
+std::ostream& operator << (std::ostream& os, const BigInt& obj) {
+    os << obj.toString();
+    return os;
 }
 
-std::istream& operator >> (std::istream&, BigInt&) {
-// pendiente
+std::istream& operator >> (std::istream& is, BigInt& obj) {
+    std::string str;
+    is >> str;
+    obj = BigInt(str);
+    return is;
 }
 
 BigInt sqrt(BigInt& a) {
