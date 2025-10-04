@@ -31,7 +31,7 @@ public:
     //~BigInt();
 
     friend bool Null(const BigInt&);
-    
+
     int operator [] (const int) const;
     int& operator [] (const int); // poder modificar el indice
 
@@ -45,37 +45,38 @@ public:
     const BigInt operator ++ (int);
     const BigInt operator -- (int);
 
-    friend BigInt& operator += (BigInt&, const BigInt&);
-    friend BigInt& operator -= (BigInt&, const BigInt&);
-    friend BigInt& operator *= (BigInt&, const BigInt&);
-    friend BigInt& operator /= (BigInt&, const BigInt&);
-    friend BigInt& operator %= (BigInt&, const BigInt&);
+    BigInt& operator += (const BigInt&);
+    BigInt& operator -= (const BigInt&);
+    BigInt& operator *= (const BigInt&);
+    BigInt& operator /= (const BigInt&);
+    BigInt& operator %= (const BigInt&);
 
-    friend BigInt operator + (const BigInt& lhs, const BigInt& rhs); // static cast a bigint
-    friend BigInt operator - (const BigInt& lhs, const BigInt& rhs);
-    friend BigInt operator * (const BigInt& lhs, const BigInt& rhs);
-    friend BigInt operator / (const BigInt& lhs, const BigInt& rhs);
-    friend BigInt operator % (const BigInt& lhs, const BigInt& rhs);
-    friend BigInt operator ^ (const BigInt& lhs, const BigInt& rhs);
+    friend BigInt operator + (const BigInt&, const BigInt&); // static cast a bigint
+    friend BigInt operator - (const BigInt&, const BigInt&);
+    friend BigInt operator * (const BigInt&, const BigInt&);
+    friend BigInt operator / (const BigInt&, const BigInt&);
+    friend BigInt operator % (const BigInt&, const BigInt&);
+    friend BigInt operator ^ (const BigInt&, const BigInt&);
 
-    friend BigInt operator * (const BigInt& lhs, int num); // pendiente
-    friend BigInt operator * (int num, const BigInt& rhs); // pendiente
+    friend BigInt operator * (const BigInt&  , int num); // pendiente
+    friend BigInt operator * (int num, const BigInt&); // pendiente
 
-    friend bool operator == (const BigInt& lhs, const BigInt& rhs);
-    friend bool operator < (const BigInt& lhs, const BigInt& rhs);
-    friend bool operator != (const BigInt& lhs, const BigInt& rhs);
-    friend bool operator > (const BigInt& lhs, const BigInt& rhs);
-    friend bool operator >= (const BigInt& lhs, const BigInt& rhs);
-    friend bool operator <= (const BigInt& lhs, const BigInt& rhs);
+    friend bool operator == (const BigInt&, const BigInt&);
+    friend bool operator < (const BigInt&, const BigInt&);
+    friend bool operator != (const BigInt&, const BigInt&);
+    friend bool operator > (const BigInt&, const BigInt&);
+    friend bool operator >= (const BigInt&, const BigInt&);
+    friend bool operator <= (const BigInt&, const BigInt&);
 
     std::string toString() const;
     int ToInt() const;
     double toDouble() const;
+    BigInt Abs() const;
 
     int getNumDigits() const;
 
-    bool equal(const BigInt& rhs) const;
-    bool LessThan(const BigInt& rhs) const;
+    bool equal(const BigInt&  ) const;
+    bool LessThan(const BigInt&  ) const;
     void Print(std::ostream& os) const;
 
     friend std::ostream& operator << (std::ostream&, const BigInt&);

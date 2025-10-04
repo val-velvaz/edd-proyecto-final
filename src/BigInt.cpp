@@ -177,3 +177,25 @@ int& BigInt::operator [] (const int index) {
         throw std::out_of_range("Indice fuera de rango");
     } return myDigits[index];
 }
+
+BigInt BigInt::Abs() const {
+    BigInt temp = *this;
+    if (temp.mySign == negative) {
+        temp.mySign = positive;
+    }
+    temp.normalize();
+    return temp;
+}
+
+BigInt& BigInt::operator += (const BigInt& other) {
+    // manejar los tres casos posibles
+    *this = *this + other;
+    return *this;
+}
+
+BigInt operator + (const BigInt& a, const BigInt& b) {
+    BigInt temp;
+    temp = a;
+    temp += b;
+    return temp;
+}
