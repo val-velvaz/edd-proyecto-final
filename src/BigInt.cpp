@@ -328,8 +328,39 @@ BigInt operator * (const BigInt& a, const BigInt& b) {
 }
 
 BigInt operator / (const BigInt& a, const BigInt& b) {
+    if (b.mySign == BigInt::zero) {
+        throw std::invalid_argument("Division by zero");
+    }
+    if (a.Abs() < b.Abs()) {
+        return BigInt(0LL);
+    }
+
+    BigInt absA = a.Abs();
+    BigInt absB = b.Abs();
+
     BigInt result;
-// pendiente
+    BigInt currentDividend;
+
+    for (int i = absA.getNumDigits() - 1; i >= 0; --i) {
+        currentDividend.myDigits.insert(currentDividend.myDigits.begin(), absA.myDigits[i]);
+        currentDividend.normalize();
+
+        int count = 0;
+        while (currentDividend >= absB) {
+            currentDividend = currentDividend - absB;
+            count++;
+        }
+        result.myDigits.insert(result.myDigits.begin(), count);
+    }
+
+    //signo
+    if (a.mySign != b.mySign) {
+        result.mySign = BigInt::negative;
+    } else {
+        result.mySign = BigInt::positive;
+    }
+
+    result.normalize();
     return result;
 }
 
