@@ -87,6 +87,8 @@ public:
 
     int compare(const BigInt&) const;
     static int compare(const BigInt&, const BigInt&);
+
+    bool isOdd() const;
 };
 
 

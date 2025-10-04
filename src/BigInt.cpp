@@ -340,9 +340,36 @@ BigInt operator % (const BigInt& a, const BigInt& b) {
 }
 
 BigInt operator ^ (const BigInt& a, const BigInt& b) {
-    BigInt result;
-// pendiente
-    return result;
+    BigInt base = a;
+    BigInt exp = b;
+    BigInt result(1LL); // 1
+
+    // exponente negativo y cero
+    if (b.isNegative()) {
+        // pendiente exponente negativos 
+        if (a.Abs() == BigInt(1LL)) {
+            return BigInt(1LL);
+        }
+        return BigInt(0LL);
+    }
+
+    if (exp.mySign == BigInt::zero) {
+        return BigInt(1LL);
+    }
+    
+    // positivo
+    BigInt absExp = exp.Abs(); 
+
+    while (absExp > BigInt(0LL)) {
+        if (absExp.isOdd()) { 
+            result = result * base;
+        }
+        base = base * base;
+        absExp = absExp / BigInt(2LL); 
+    }
+    if (a.isNegative() && b.isOdd()) {
+        result.mySign = BigInt::negative;
+    } return result;
 }
 
 BigInt operator * (const BigInt& a, int num) {
@@ -459,4 +486,11 @@ BigInt Factorial(int n) {
 
 int compare(const BigInt&, const BigInt&) {
 // pendiente
+}
+
+bool BigInt::isOdd() const {
+    if (myDigits.empty()) {
+        return false;
+    }
+    return myDigits[0] % 2 != 0;
 }
