@@ -17,6 +17,8 @@ public:
     List(const List&);
     List(List&&) noexcept;
 
+    List<T>& operator=(const List<T>& other); // Agregado para la copia
+
     void init();
     bool empty() const;
     bool full() const;
@@ -32,6 +34,14 @@ public:
     void cancel();
     std::string toString() const;
 };
+
+template<class T>
+List<T>& List<T>::operator=(const List<T>& other) {
+    if (this != &other) {
+        copyAll(other);
+    }
+    return *this;
+}
 
 template<class T>
 bool List<T>::isValidPos(int pos) const {
