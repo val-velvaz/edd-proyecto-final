@@ -1,32 +1,35 @@
 #pragma once
 
-#include <vector>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <algorithm>
 #include <string>
 
 #include "BigInt.hpp"
 
-class Contenedor {
+template <class T>
+class List {
 private:
-    std::vector<BigInt> data;
-    
+    T data[3000];
+    size_t last;
+
+    bool isValidPos(const size_t&) const;
+    void copyAll(const List<T>&);
+
 public:
-    Contenedor();
-    Contenedor(const Contenedor&);
+    List();
+    List(const List&);
+    List(List&&) noexcept;
 
-    Contenedor& operator = (const Contenedor&);
+    void init();
+    bool empty() cont;
+    bool full() const;
 
-    void add(const BigInt&);
-    void del(const BigInt&);
-    void sort();
-    void writeToDisk(const std::string&);
-    void readFromDisk(const std::string&);
-    void clear();
+    void add(const size_t&, const T&);
+    void del(const size_t&);
 
+    T _return(const size_t&) const;
+
+    size_t first() const;
+    size_t last() const;
+
+    void cancel();
     std::string toString() const;
-
-    BigInt& findData(const BigInt&);
 };

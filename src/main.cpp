@@ -2,6 +2,8 @@
 #include <stdexcept>
 #include "BigInt.hpp"
 
+// para esto si utilice ia
+
 void test_constructors() {
     std::cout << "--- Probando constructores ---" << std::endl;
     BigInt a(1234567890123456789LL);
@@ -77,7 +79,9 @@ void test_conversions_and_functions() {
     std::cout << "sqrt(" << num << ") = " << sqrt(num) << std::endl;
     
     int fact_n = 50;
+    int hola = 20000;
     std::cout << fact_n << "! = " << Factorial(fact_n) << std::endl;
+    std::cout <<  hola << "! = " << Factorial(hola) << std::endl;
 
     BigInt num_pow("3");
     BigInt exp_pow("10");
