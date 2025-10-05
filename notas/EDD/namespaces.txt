@@ -1,0 +1,12 @@
+NAMESPACES -------------------------------------
+Un namespace es una etiqueta que agrupa variables, 
+funciones o clases para que no choquen con otros elementos
+del mismo nombre en un programa.
+
+namespace Matemáticas {
+    const double PI = 3.1415926535;
+
+    double cuadrado(double x) {
+        return x * x;
+    }
+}

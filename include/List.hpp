@@ -24,7 +24,7 @@ public:
     void add(int pos, const T& element);
     void del(int pos);
 
-    T get(int pos) const;
+    T get(int pos) const; // recupera
 
     int first() const;
     int last() const;
