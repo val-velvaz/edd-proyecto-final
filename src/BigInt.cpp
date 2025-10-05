@@ -4,6 +4,8 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 #include "BigInt.hpp"
 
@@ -738,4 +740,29 @@ bool BigInt::isOdd() const {
         return false;
     }
     return myDigits[0] % 2 != 0;
+}
+
+BigInt BigInt::random(int numDigits) {
+    if (numDigits <= 0) {
+        return BigInt(static_cast<long long>(0));
+    }
+
+    BigInt result;
+    result.myDigits.clear();
+    result.mySign = positive;
+    result.myNumDigits = numDigits;
+
+    static bool seeded = false;
+    if (!seeded) {
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
+        seeded = true;
+    }
+
+    result.myDigits.push_back(std::rand() % 9 + 1);
+
+    for (int i = 1; i < numDigits; ++i) {
+        result.myDigits.push_back(std::rand() % 10);
+    }
+
+    return result;
 }

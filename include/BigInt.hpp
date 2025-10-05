@@ -89,6 +89,8 @@ public:
     static int compare(const BigInt&, const BigInt&);
 
     bool isOdd() const;
+
+    static BigInt random(int numDigits);
 };
 
 BigInt Factorial(int n);
