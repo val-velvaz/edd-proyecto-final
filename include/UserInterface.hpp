@@ -9,4 +9,10 @@ public:
 
 private:
     void mainMenu();
+    void showMenu();
+    void modifyMenu();
+    void cleanMenu();
+
+    void enterToContinue();
+    void cleanWindow();
 };
