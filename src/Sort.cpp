@@ -1,5 +1,6 @@
 #include "Sort.hpp"
 #include <iostream>
+#include <vector> 
 
 namespace Sorters {
     bool isSort(const List<BigInt>& list, int (*cmp)(const BigInt&, const BigInt&)) {
@@ -13,52 +14,38 @@ namespace Sorters {
         }
         return true;
     }
-    
+
     void swapData(BigInt& a, BigInt& b) {
-        BigInt temp = a;
-        a = b;
-        b = temp;
+        BigInt temp = std::move(a);
+        a = std::move(b);
+        b = std::move(temp);
     }
-    
+
     int toTop(const BigInt& a, const BigInt& b) {
-        if (a < b) return -1;
-        if (a > b) return 1;
-        return 0;
+        return a.compare(b);
     }
-    
+
     int toBotton(const BigInt& a, const BigInt& b) {
-        if (a > b) return -1;
-        if (a < b) return 1;
-        return 0;
+        return b.compare(a);
     }
-    
-void bubbleSort(List<BigInt>& list, int (*cmp)(const BigInt&, const BigInt&)) {
+
+    void bubbleSort(List<BigInt>& list, int (*cmp)(const BigInt&, const BigInt&)) {
         int n = list.last();
-        if (n <= 0) return;  
+        if (n <= 0) return;
 
-        bool flag;
-        do {
-            flag = false;
-            for (int j = 0; j < n; ++j) {
-                BigInt a = list.get(j);
-                BigInt b = list.get(j + 1);
-
-                if (cmp(a, b) > 0) {
-                    swapData(a, b);
-
-                    list.del(j);
-                    list.add(j, a);
-                    list.del(j + 1);
-                    list.add(j + 1, b);
-
-                    flag = true;
+        bool swapped;
+        for (int i = 0; i < n; i++) {
+            swapped = false;
+            for (int j = 0; j < n - i; j++) {
+                if (cmp(list.get(j), list.get(j + 1)) > 0) {
+                    swapData(list.get(j), list.get(j + 1));
+                    swapped = true;
                 }
             }
-            n--;
-        } while (flag);
+            if (!swapped) break;
+        }
     }
-    
-    
+
     void insertSort(List<BigInt>& list, int (*cmp)(const BigInt&, const BigInt&)) {
         int n = list.last();
         for (int i = 1; i <= n; ++i) {
@@ -66,17 +53,13 @@ void bubbleSort(List<BigInt>& list, int (*cmp)(const BigInt&, const BigInt&)) {
             int j = i - 1;
 
             while (j >= 0 && cmp(list.get(j), key) > 0) {
-                BigInt temp = list.get(j);
-                list.del(j + 1);
-                list.add(j + 1, temp);
+                list.get(j + 1) = list.get(j);
                 j--;
             }
-            list.del(j + 1);
-            list.add(j + 1, key);
+            list.get(j + 1) = key;
         }
     }
 
-    
     void selectSort(List<BigInt>& list, int (*cmp)(const BigInt&, const BigInt&)) {
         int n = list.last();
         for (int i = 0; i < n; ++i) {
@@ -87,15 +70,7 @@ void bubbleSort(List<BigInt>& list, int (*cmp)(const BigInt&, const BigInt&)) {
                 }
             }
             if (minIndex != i) {
-                BigInt a = list.get(i);
-                BigInt b = list.get(minIndex);
-                BigInt temp = std::move(a);
-                a = std::move(b);
-                b = std::move(temp);
-                list.del(i);
-                list.add(i, a);
-                list.del(minIndex);
-                list.add(minIndex, b);
+                swapData(list.get(i), list.get(minIndex));
             }
         }
     }
@@ -107,49 +82,37 @@ void bubbleSort(List<BigInt>& list, int (*cmp)(const BigInt&, const BigInt&)) {
                 BigInt temp = list.get(i);
                 int j;
                 for (j = i; j >= gap && cmp(list.get(j - gap), temp) > 0; j -= gap) {
-                    BigInt moved = list.get(j - gap);
-                    list.del(j);
-                    list.add(j, moved);
+                    list.get(j) = list.get(j - gap);
                 }
-                list.del(j);
-                list.add(j, temp);
+                list.get(j) = temp;
             }
         }
     }
 
-    
     void merge(List<BigInt>& list, int left, int mid, int right, int (*cmp)(const BigInt&, const BigInt&)) {
         int n1 = mid - left + 1;
         int n2 = right - mid;
-        std::vector<BigInt> L, R;
-        for (int i = 0; i < n1; ++i) L.push_back(list.get(left + i));
-        for (int j = 0; j < n2; ++j) R.push_back(list.get(mid + 1 + j));
+        std::vector<BigInt> L(n1), R(n2);
+
+        for (int i = 0; i < n1; ++i) L[i] = list.get(left + i);
+        for (int j = 0; j < n2; ++j) R[j] = list.get(mid + 1 + j);
+
         int i = 0, j = 0, k = left;
         while (i < n1 && j < n2) {
             if (cmp(L[i], R[j]) <= 0) {
-                list.del(k);
-                list.add(k, L[i++]);
+                list.get(k) = L[i++];
             } else {
-                list.del(k);
-                list.add(k, R[j++]);
+                list.get(k) = R[j++];
             }
             k++;
         }
-        while (i < n1) {
-            list.del(k);
-            list.add(k, L[i++]);
-            k++;
-        }
-        while (j < n2) {
-            list.del(k);
-            list.add(k, R[j++]);
-            k++;
-        }
+        while (i < n1) list.get(k++) = L[i++];
+        while (j < n2) list.get(k++) = R[j++];
     }
 
     void mergeSortHelper(List<BigInt>& list, int left, int right, int (*cmp)(const BigInt&, const BigInt&)) {
         if (left < right) {
-            int mid = (left + right) / 2;
+            int mid = left + (right - left) / 2;
             mergeSortHelper(list, left, mid, cmp);
             mergeSortHelper(list, mid + 1, right, cmp);
             merge(list, left, mid, right, cmp);
@@ -161,7 +124,6 @@ void bubbleSort(List<BigInt>& list, int (*cmp)(const BigInt&, const BigInt&)) {
             mergeSortHelper(list, 0, list.last(), cmp);
     }
 
-    
     int partition(List<BigInt>& list, int low, int high, int (*cmp)(const BigInt&, const BigInt&)) {
         BigInt pivot = list.get(high);
         int i = low - 1;
@@ -188,6 +150,4 @@ void bubbleSort(List<BigInt>& list, int (*cmp)(const BigInt&, const BigInt&)) {
         if (list.last() > 0)
             quickSortHelper(list, 0, list.last(), cmp);
     }
-
-
 }

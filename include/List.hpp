@@ -17,7 +17,7 @@ public:
     List(const List&);
     List(List&&) noexcept;
 
-    List<T>& operator=(const List<T>& other); // Agregado para la copia
+    List<T>& operator=(const List<T>& other);
 
     void init();
     bool empty() const;
@@ -26,7 +26,8 @@ public:
     void add(int pos, const T& element);
     void del(int pos);
 
-    T get(int pos) const; // recupera
+    T get(int pos) const;
+    T& get(int pos);
 
     int first() const;
     int last() const;
@@ -34,14 +35,6 @@ public:
     void cancel();
     std::string toString() const;
 };
-
-template<class T>
-List<T>& List<T>::operator=(const List<T>& other) {
-    if (this != &other) {
-        copyAll(other);
-    }
-    return *this;
-}
 
 template<class T>
 bool List<T>::isValidPos(int pos) const {
@@ -60,7 +53,7 @@ template<class T>
 List<T>::List() : lastPos(-1) {}
 
 template<class T>
-List<T>::List(const List& other) : lastPos(other.lastPos) {
+List<T>::List(const List& other) {
     copyAll(other);
 }
 
@@ -73,40 +66,46 @@ List<T>::List(List&& other) noexcept : lastPos(other.lastPos) {
 }
 
 template<class T>
-void List<T>::init() { 
-    lastPos = -1; 
+List<T>& List<T>::operator=(const List<T>& other) {
+    if (this != &other) {
+        copyAll(other);
+    }
+    return *this;
+}
+
+template<class T>
+void List<T>::init() {
+    lastPos = -1;
 }
 
 template<class T>
 bool List<T>::empty() const {
-    return lastPos == -1; 
+    return lastPos == -1;
 }
 
 template<class T>
-bool List<T>::full() const { 
-    return lastPos == ARRAYSIZE - 1; 
+bool List<T>::full() const {
+    return lastPos == ARRAYSIZE - 1;
 }
 
 template<class T>
 void List<T>::add(int pos, const T& element) {
     if (full())
         throw std::overflow_error("Lista llena.");
-    if (pos != -1 && !isValidPos(pos))
-        throw std::out_of_range("Posición inválida.");
+    if (pos < 0 || pos > lastPos + 1) // Corregido para permitir añadir al final
+        throw std::out_of_range("Posicion invalida.");
 
-    int insertPos = (pos == -1) ? lastPos + 1 : pos;
-
-    for (int i = lastPos; i >= insertPos; --i)
+    for (int i = lastPos; i >= pos; --i)
         data[i + 1] = data[i];
 
-    data[insertPos] = element;
+    data[pos] = element;
     lastPos++;
 }
 
 template<class T>
 void List<T>::del(int pos) {
     if (!isValidPos(pos))
-        throw std::out_of_range("Posición inválida.");
+        throw std::out_of_range("Posicion invalida.");
 
     for (int i = pos; i < lastPos; ++i)
         data[i] = data[i + 1];
@@ -117,29 +116,37 @@ void List<T>::del(int pos) {
 template<class T>
 T List<T>::get(int pos) const {
     if (!isValidPos(pos))
-        throw std::out_of_range("Posición inválida.");
+        throw std::out_of_range("Posicion invalida.");
     return data[pos];
 }
 
 template<class T>
-int List<T>::first() const { 
-    return empty() ? -1 : 0; 
+T& List<T>::get(int pos) {
+    if (!isValidPos(pos))
+        throw std::out_of_range("Posicion invalida.");
+    return data[pos];
 }
 
 template<class T>
-int List<T>::last() const { 
-    return lastPos; 
+int List<T>::first() const {
+    return empty() ? -1 : 0;
 }
 
 template<class T>
-void List<T>::cancel() { 
-    lastPos = -1; 
+int List<T>::last() const {
+    return lastPos;
+}
+
+template<class T>
+void List<T>::cancel() {
+    lastPos = -1;
 }
 
 template<class T>
 std::string List<T>::toString() const {
     std::string result;
     for (int i = 0; i <= lastPos; ++i) {
-        result += std::to_string(i + 1) + ". " + data[i].toString() + "\n";
-    } return result;
+        result += data[i].toString() + "\n";
+    }
+    return result;
 }
