@@ -9,6 +9,4 @@ public:
 
 private:
     void mainMenu();
-    void testSortingAlgorithms();
-    void generateRandomList(List<BigInt>& list, int size, int numDigits);
 };
