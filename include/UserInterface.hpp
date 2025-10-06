@@ -1,18 +1,25 @@
 #pragma once
-
-#include "List.hpp"
-#include "BigInt.hpp"
+#include "RecipeBook.hpp"
 
 class UserInterface {
-public:
-    void run();
-
 private:
-    void mainMenu();
-    void showMenu();
-    void modifyMenu();
-    void cleanMenu();
+    RecipeBook myBook;
+    const std::string FILENAME = "recetario.txt";
 
-    void enterToContinue();
-    void cleanWindow();
+    void mainMenu();
+    void showRecipesMenu();
+    void addRecipeMenu();
+    void findRecipeMenu();
+    void deleteRecipeMenu();
+    void sortRecipeMenu();
+    void manageIngredientsMenu();
+
+    void showAllRecipes();
+    void showFilteredRecipes();
+    Category selectCategory();
+    void pressEnterToContinue();
+
+public:
+    UserInterface();
+    void run();
 };

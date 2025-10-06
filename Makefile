@@ -2,13 +2,13 @@
 CXX = g++.exe
 
 # --- CONFIGURACIÓN DEL PROYECTO ---
-TARGET = output/proyecto_final.exe
-DEBUG_TARGET = output/Canciones_debug.exe
+TARGET = output/recetario.exe
+DEBUG_TARGET = output/recetario_debug.exe
 
 # --- BANDERAS (FLAGS) DE COMPILACIÓN Y ENLACE ---
 CXXFLAGS = -std=c++14 -Iinclude -m64
 LDFLAGS = -static-libgcc -static-libstdc++ -m64
-LIBS =
+LIBS = 
 
 # --- BANDERAS (FLAGS) DE DEPURACIÓN ---
 DEBUG_CXXFLAGS = $(CXXFLAGS) -g -O0
