@@ -1,7 +1,7 @@
 {
     "files.exclude": {
         "**/*.exe": true,
-        "**/*.dll": true,
+        "**/*.dll": false,
         "**/*.obj": true,
         "**/*.o": true,
         "**/*.class": true,
