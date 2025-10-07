@@ -3,16 +3,19 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**",
                 "${workspaceFolder}/include",
-                "${workspaceFolder}/lib/SFML/include" // <-- ¡Esta es la línea clave!
+                // Ruta para SDL3
+                "${workspaceFolder}/lib/SDL3/x86_64-w64-mingw32/include",
+                // Ruta para SDL_ttf
+                "${workspaceFolder}/lib/SDL_ttf/x86_64-w64-mingw32/include",
+                "${workspaceFolder}/**"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:/msys64/ucrt64/bin/g++.exe", // Ajusta esta ruta si tu g++.exe está en otro lugar
+            "compilerPath": "C:/msys64/ucrt64/bin/g++.exe",
             "cStandard": "c17",
             "cppStandard": "c++14",
             "intelliSenseMode": "windows-gcc-x64"

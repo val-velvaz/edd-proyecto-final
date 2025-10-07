@@ -1,10 +1,23 @@
 #include "Game.hpp"
 #include "State.hpp"
+#include <SDL3_ttf/SDL_ttf.h> // <-- LÍNEA CORREGIDA
+#include <memory>
 
-Game::Game() : window(sf::VideoMode(800, 600), "Recetario Kawaii") {
-    window.setFramerateLimit(60);
-    // Cargar recetas desde el disco al iniciar
+Game::Game() {
+    SDL_Init(SDL_INIT_VIDEO);
+    TTF_Init();
+
+    SDL_CreateWindowAndRenderer("Recetario Kawaii", 800, 600, 0, &window, &renderer);
+    
     recipeBook.loadFromFile("recetario.txt");
+}
+
+Game::~Game() {
+    recipeBook.saveToFile("recetario.txt");
+    TTF_Quit();
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 }
 
 void Game::pushState(std::unique_ptr<State> state) {
@@ -12,30 +25,36 @@ void Game::pushState(std::unique_ptr<State> state) {
 }
 
 void Game::popState() {
-    // Guardar recetas al salir del juego
-    recipeBook.saveToFile("recetario.txt");
-    states.pop();
+    if (!states.empty()) {
+        states.pop();
+    }
 }
 
 void Game::changeState(std::unique_ptr<State> state) {
     if (!states.empty()) {
-        states.pop();
+        popState();
     }
     pushState(std::move(state));
 }
 
 void Game::run() {
-    sf::Clock clock;
+    bool quit = false;
+    while (!quit && !states.empty()) {
+        auto& currentState = states.top();
 
-    while (window.isOpen() && !states.empty()) {
-        float dt = clock.restart().asSeconds();
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+                quit = true;
+            }
+            currentState->handleInput(event);
+        }
 
-        // Manejar eventos, actualizar y dibujar el estado actual
-        states.top()->handleInput();
-        states.top()->update(dt);
-        
-        window.clear(sf::Color(255, 240, 245)); // Un color de fondo rosa pastel
-        states.top()->draw();
-        window.display();
+        currentState->update(1.0f / 60.0f);
+
+        SDL_SetRenderDrawColor(renderer, 255, 240, 245, 255); // Rosa pastel
+        SDL_RenderClear(renderer);
+        currentState->draw();
+        SDL_RenderPresent(renderer);
     }
 }

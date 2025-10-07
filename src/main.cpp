@@ -1,9 +1,8 @@
 #include "Game.hpp"
-#include "states/MainMenuState.hpp" // Crearemos este archivo después
+#include "states/MainMenuState.hpp"
 
-int main() {
+int main(int argc, char* argv[]) {
     Game game;
-    // El estado inicial será el menú principal
     game.pushState(std::make_unique<MainMenuState>(game));
     game.run();
     return 0;
